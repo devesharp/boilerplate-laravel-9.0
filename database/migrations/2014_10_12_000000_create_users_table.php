@@ -16,6 +16,7 @@ return new class extends Migration
         Schema::create('users', function (Blueprint $table) {
             $table->id();
             $table->boolean('enabled')->default(true);
+            $table->boolean('blocked')->default(false);
             $table->string('name');
             $table->string('role')->default(\App\Modules\Users\Interfaces\UsersRoles::SIMPLE->value);
             $table->string('login')->unique();

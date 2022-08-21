@@ -4,7 +4,7 @@ use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
 
-class CreateUsersTokensTable extends Migration
+class CreateUsersAccessTokensTable extends Migration
 {
     /**
      * Run the migrations.
@@ -19,6 +19,7 @@ class CreateUsersTokensTable extends Migration
             $table->unsignedBigInteger('user_id');
             $table->mediumText('token');
             $table->timestamp('used_at')->nullable();
+            $table->timestamp('logout_at')->nullable();
             $table->timestamps();
 
             $table->foreign('user_id')->references('id')->on('users');

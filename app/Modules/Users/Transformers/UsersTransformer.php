@@ -29,6 +29,7 @@ class UsersTransformer extends Transformer
         $transform = [];
 
         $transform['id'] = (string) $model->id;
+        $transform['access_token'] = $model->access_token ?? null;
         $transform['name'] = (string) $model->name;
         $transform['role'] = (string) $model->role;
         $transform['login'] = (string) $model->login;
