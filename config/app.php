@@ -185,6 +185,7 @@ return [
         /*
          * Package Service Providers...
          */
+        Devesharp\Console\MakeProvider::class,
 
         /*
          * Application Service Providers...

@@ -17,3 +17,10 @@ use Illuminate\Support\Facades\Route;
 Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
     return $request->user();
 });
+Route::controller(\App\Modules\Users\Controllers\UsersController::class)->group(function () {
+    Route::post('users/search', 'search');
+    Route::get('users/{id}', 'get');
+    Route::post('users/{id}', 'update');
+    Route::post('users', 'create');
+    Route::delete('users/{id}', 'delete');
+});
