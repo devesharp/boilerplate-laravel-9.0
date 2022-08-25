@@ -2,6 +2,10 @@
 
 namespace App\Modules\Users\Controllers;
 
+use App\Modules\Users\Dto\ChangePasswordDtoUsersDto;
+use App\Modules\Users\Dto\CreateUsersDto;
+use App\Modules\Users\Dto\SearchUsersDto;
+use App\Modules\Users\Dto\UpdateUsersDto;
 use Devesharp\Patterns\Controller\ControllerBase;
 
 class UsersController extends ControllerBase
@@ -14,7 +18,7 @@ class UsersController extends ControllerBase
 
     public function search()
     {
-        return $this->service->search(request()->all(), $this->auth, 'default');
+        return $this->service->search(SearchUsersDto::make(request()->all()), $this->auth, 'default');
     }
 
     public function get($id)
@@ -24,12 +28,27 @@ class UsersController extends ControllerBase
 
     public function update($id)
     {
-        return $this->service->update($id, request()->all(), $this->auth, 'default');
+        return $this->service->update($id, UpdateUsersDto::make(request()->all()), $this->auth, 'default');
+    }
+
+    public function getSelf()
+    {
+        return $this->service->get($this->auth->id, $this->auth);
+    }
+
+    public function updateSelf()
+    {
+        return $this->service->update($this->auth->id, UpdateUsersDto::make(request()->all()), $this->auth, 'default');
     }
 
     public function create()
     {
-        return $this->service->create(request()->all(), $this->auth, 'default');
+        return $this->service->create(CreateUsersDto::make(request()->all()), $this->auth, 'default');
+    }
+
+    public function changePassword()
+    {
+        return $this->service->changePassword(ChangePasswordDtoUsersDto::make(request()->all()), $this->auth, 'default');
     }
 
     public function delete($id)

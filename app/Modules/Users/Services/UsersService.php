@@ -2,11 +2,18 @@
 
 namespace App\Modules\Users\Services;
 
+use App\Core\Users\Models\Users;
+use App\Exceptions\Exception;
+use App\Modules\Users\Dto\ChangePasswordDtoUsersDto;
+use App\Modules\Users\Dto\CreateUsersDto;
+use App\Modules\Users\Dto\SearchUsersDto;
+use App\Modules\Users\Dto\UpdateUsersDto;
 use Devesharp\Patterns\Service\Service;
 use Devesharp\Patterns\Service\ServiceFilterEnum;
 use Devesharp\Patterns\Transformer\Transformer;
 use Devesharp\Support\Collection;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Hash;
 
 class UsersService extends Service
 {
@@ -56,7 +63,6 @@ class UsersService extends Service
     ];
 
     public function __construct(
-        protected \App\Modules\Users\Validators\UsersValidator $validator,
         protected \App\Modules\Users\Transformers\UsersTransformer $transformer,
         protected \App\Modules\Users\Repositories\UsersRepository $repository,
         protected \App\Modules\Users\Policies\UsersPolicy $policy
@@ -66,20 +72,17 @@ class UsersService extends Service
     /**
      * Create resource
      *
-     * @param array $originalData
+     * @param CreateUsersDto $data
      * @param null $requester
      * @return mixed
      * @throws \Exception
      */
-    public function create(array $originalData, $requester = null, $context = 'model')
+    public function create(CreateUsersDto $data, $requester = null, $context = 'model')
     {
         try {
 
             // Authorization
             $this->policy->create($requester);
-
-            // Data validation
-            $data = $this->validator->create($originalData, $requester);
 
             // Iniciar transação
             DB::beginTransaction();
@@ -101,14 +104,14 @@ class UsersService extends Service
 
     /**
      * @param int $id
-     * @param array $originalData
+     * @param UpdateUsersDto $originalData
      * @param null $requester
      * @return mixed
      * @throws \Exception
      */
     public function update(
         int $id,
-        array $originalData,
+        UpdateUsersDto $data,
         $requester = null,
         $context = 'model'
     ) {
@@ -120,9 +123,6 @@ class UsersService extends Service
 
             // Iniciar transação
             DB::beginTransaction();
-
-            // Data validation
-            $data = $this->validator->update($originalData, $requester);
 
             // Treatment data
             $resourceData = $this->treatment($requester, $data, $model, 'update');
@@ -191,17 +191,14 @@ class UsersService extends Service
     }
 
     /**
-     * @param array $originalData
+     * @param SearchUsersDto $originalData
      * @param null $requester
      * @return array
      */
-    public function search(array $originalData = [], $requester = null)
+    public function search(SearchUsersDto $data, $requester = null)
     {
         // Authorization
         $this->policy->search($requester);
-
-        // Validate data
-        $data = $this->validator->search($originalData, $requester);
 
         // Make query
         $query = $this->makeSearch($data, $requester);
@@ -223,9 +220,6 @@ class UsersService extends Service
     {
         /** @var \App\Modules\Users\Repositories\UsersRepository $query */
         $query = parent::makeSearch($data, $requester);
-
-//        // Example Query
-//        $query->whereInt('id', 1);
 
         return $query;
     }
@@ -259,5 +253,27 @@ class UsersService extends Service
             DB::rollBack();
             throw $e;
         }
+    }
+
+    /**
+     * Trocar senha
+     *
+     * @param ChangePasswordDtoUsersDto $originalData
+     * @param $user
+     * @return bool[]
+     */
+    public function changePassword(ChangePasswordDtoUsersDto $data, $user)
+    {
+        if (! Hash::check($data['old_password'], $user->password)) {
+            Exception::Exception(\App\Exceptions\Exception::PASSWORD_INCORRECT);
+        }
+
+        $this->repository->clearQuery()->updateById($user->id, [
+            'password' => Hash::make($data['new_password']),
+        ]);
+
+        return [
+            'changed' => true,
+        ];
     }
 }

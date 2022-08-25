@@ -2,6 +2,12 @@
 
 namespace Tests\Unit\Users;
 
+use App\Modules\Users\Dto\ResetPasswordUsersDto;
+use App\Modules\Users\Dto\ForgetPasswordUsersDto;
+use App\Modules\Users\Dto\LoginUsersDto;
+use App\Modules\Users\Dto\LogoutUsersDto;
+use App\Modules\Users\Dto\TokenVerifyUsersDto;
+use App\Modules\Users\Dto\VerifyRememberPasswordUsersDto;
 use App\Modules\Users\Models\Users;
 use App\Modules\Users\Models\UsersAccessTokens;
 use App\Modules\Users\Services\UsersAuthService;
@@ -33,10 +39,10 @@ class UsersAuthTest extends TestCase
          'password' => Hash::make('123456aa'),
       ])->create();
 
-    $userLogged = $this->service->login([
+    $userLogged = $this->service->login(LoginUsersDto::make([
          'login' => $user->login,
          'password' => '123456aa',
-      ]);
+      ]));
 
     $this->assertEquals(true, isset($userLogged['access_token']));
     $this->assertEquals(true, is_string($userLogged['access_token']));
@@ -55,10 +61,10 @@ class UsersAuthTest extends TestCase
           'password' => Hash::make('123456aa'),
       ])->create();
 
-    $userLogged = $this->service->login([
+    $userLogged = $this->service->login(LoginUsersDto::make([
          'login' => $user->email,
          'password' => '123456aa',
-      ]);
+      ]));
 
     $this->assertEquals(true, isset($userLogged['access_token']));
     $this->assertEquals(true, is_string($userLogged['access_token']));
@@ -78,10 +84,10 @@ class UsersAuthTest extends TestCase
     $user->blocked = 1;
     $user->update();
 
-    $this->service->login([
+    $this->service->login(LoginUsersDto::make([
          'login' => $user->email,
          'password' => '123456aa',
-      ]);
+      ]));
   }
 
   /**
@@ -98,10 +104,10 @@ class UsersAuthTest extends TestCase
     $user->enabled = 0;
     $user->update();
 
-    $this->service->login([
+    $this->service->login(LoginUsersDto::make([
          'login' => $user->email,
          'password' => '123456aa',
-      ]);
+      ]));
   }
 
   /**
@@ -113,10 +119,10 @@ class UsersAuthTest extends TestCase
           'password' => Hash::make('123456aa'),
       ])->create();
 
-      $userLogged = $this->service->login([
+      $userLogged = $this->service->login(LoginUsersDto::make([
           'login' => $user->login,
           'password' => '123456aa',
-      ]);
+      ]));
 
       $this->assertEquals(true, isset($userLogged['access_token']));
       $this->assertEquals(true, is_string($userLogged['access_token']));
@@ -125,7 +131,7 @@ class UsersAuthTest extends TestCase
      * Logout
      */
       auth()->setUser($user);
-      $this->service->logout($user, []);
+      $this->service->logout(LogoutUsersDto::make([]), $user);
 
     $this->assertEquals(0, UsersAccessTokens::query()->where('enabled', true)->count());
   }
@@ -139,12 +145,14 @@ class UsersAuthTest extends TestCase
           'password' => Hash::make('123456aa'),
       ])->create();
 
-    $userLogged = $this->service->login([
+    $userLogged = $this->service->login(LoginUsersDto::make([
          'login' => $user->email,
          'password' => '123456aa',
-      ]);
+      ]));
 
-    $user = $this->service->checkValidToken($userLogged['access_token']);
+    $user = $this->service->checkValidToken(TokenVerifyUsersDto::make([
+        'access_token' => $userLogged['access_token']
+    ]));
     $this->assertEquals($user, true);
   }
 
@@ -157,12 +165,14 @@ class UsersAuthTest extends TestCase
           'password' => Hash::make('123456aa'),
       ])->create();
 
-    $userLogged = $this->service->login([
+    $userLogged = $this->service->login(LoginUsersDto::make([
          'login' => $user->email,
          'password' => '123456aa',
-      ]);
+      ]));
 
-    $user = $this->service->checkValidToken($userLogged['access_token'] . 'o');
+    $user = $this->service->checkValidToken(TokenVerifyUsersDto::make([
+        'access_token' => $userLogged['access_token'] . 'o'
+    ]));
     $this->assertEquals($user, false);
   }
 
@@ -175,15 +185,17 @@ class UsersAuthTest extends TestCase
           'password' => Hash::make('123456aa'),
       ])->create();
 
-    $userLogged = $this->service->login([
+    $userLogged = $this->service->login(LoginUsersDto::make([
          'login' => $user->email,
          'password' => '123456aa',
-      ]);
+      ]));
 
     // Remove todos os tokens
     UsersAccessTokens::query()->delete();
 
-    $user = $this->service->checkValidToken($userLogged['access_token']);
+    $user = $this->service->checkValidToken(TokenVerifyUsersDto::make([
+        'access_token' => $userLogged['access_token']
+    ]));
     $this->assertEquals($user, false);
   }
 
@@ -196,7 +208,7 @@ class UsersAuthTest extends TestCase
           'password' => Hash::make('123456aa'),
       ])->create();
 
-    $forgetPassword = $this->service->forgetPassword($user->login);
+    $forgetPassword = $this->service->forgetPassword(ForgetPasswordUsersDto::make(['login' => $user->login]));
     $this->assertEquals($forgetPassword['email'], $user->email);
     $this->assertEquals(isset(Users::find($user->id)->remember_token), true);
     $this->assertEquals(! empty(Users::find($user->id)->remember_token), true);
@@ -211,7 +223,7 @@ class UsersAuthTest extends TestCase
           'password' => Hash::make('123456aa'),
       ])->create();
 
-    $forgetPassword = $this->service->forgetPassword($user->email);
+    $forgetPassword = $this->service->forgetPassword(ForgetPasswordUsersDto::make(['login' => $user->email]));
     $this->assertEquals($forgetPassword['email'], $user->email);
   }
 
@@ -223,7 +235,7 @@ class UsersAuthTest extends TestCase
     $this->expectException(\App\Exceptions\Exception::class);
     $this->expectExceptionCode(\App\Exceptions\Exception::RECOVERY_PASSWORD_LOGIN_INVALID);
 
-    $this->service->forgetPassword('login');
+    $this->service->forgetPassword(ForgetPasswordUsersDto::make(['login' => 'login']));
   }
 
   /**
@@ -235,13 +247,13 @@ class UsersAuthTest extends TestCase
           'password' => Hash::make('123456aa'),
       ])->create();
 
-    $this->service->forgetPassword($user->login);
+    $this->service->forgetPassword(ForgetPasswordUsersDto::make(['login' => $user->login]));
 
     $rememberToken = Users::find($user->id)->remember_token;
-    $changed = $this->service->changePasswordByToken([
+    $changed = $this->service->changePasswordByToken(ResetPasswordUsersDto::make([
          'remember_token' => Users::find($user->id)->remember_token,
-         'password' => 'newPassword',
-      ]);
+         'new_password' => 'newPassword',
+      ]));
 
     $this->assertEquals(true, $changed['changed']);
     $this->assertTrue(Hash::check('newPassword', Users::find($user->id)->password));
@@ -255,14 +267,14 @@ class UsersAuthTest extends TestCase
     $this->expectException(\App\Exceptions\Exception::class);
     $this->expectExceptionCode(\App\Exceptions\Exception::NOT_FOUND_RESOURCE);
 
-    $this->service->changePasswordByToken([
+    $this->service->changePasswordByToken(ResetPasswordUsersDto::make([
          'remember_token' => 'token',
-         'password' => 'newPassword',
-      ]);
+         'new_password' => 'newPassword',
+      ]));
   }
 
   /**
-   * @testdox checkTokenRecoveryPasswordValid - Verificar se token é valido (não encontrado)
+   * @testdox verifyRememberPassword - Verificar se token é valido (não encontrado)
    */
   public function testCheckTokenForgetPasswordValid()
   {
@@ -270,17 +282,17 @@ class UsersAuthTest extends TestCase
           'password' => Hash::make('123456aa'),
       ])->create();
 
-    $forgetPassword = $this->service->forgetPassword($user->email);
+    $forgetPassword = $this->service->forgetPassword(ForgetPasswordUsersDto::make(['login' => $user->email]));
     $this->assertEquals($forgetPassword['email'], $user->email);
 
     $this->expectException(\App\Exceptions\Exception::class);
     $this->expectExceptionCode(\App\Exceptions\Exception::RECOVERY_PASSWORD_TOKEN_INVALID);
 
-    $this->service->checkTokenRecoveryPasswordValid(['token' => 'token']);
+    $this->service->verifyRememberPassword(VerifyRememberPasswordUsersDto::make(['remember_token' => 'token']));
   }
 
   /**
-   * @testdox checkTokenRecoveryPasswordValid - Verificar se token é valido (vazio)
+   * @testdox verifyRememberPassword - Verificar se token é valido (vazio)
    */
   public function testCheckTokenForgetPasswordValidEmpty()
   {
@@ -290,11 +302,11 @@ class UsersAuthTest extends TestCase
     $this->expectException(\App\Exceptions\Exception::class);
     $this->expectExceptionCode(\App\Exceptions\Exception::RECOVERY_PASSWORD_TOKEN_INVALID);
 
-    $this->service->checkTokenRecoveryPasswordValid(['token' => '']);
+    $this->service->verifyRememberPassword(VerifyRememberPasswordUsersDto::make(['remember_token' => '']));
   }
 
   /**
-   * @testdox checkTokenRecoveryPasswordValid - Verificar se token é valido (expirado)
+   * @testdox verifyRememberPassword - Verificar se token é valido (expirado)
    */
   public function testCheckTokenForgetPasswordValidExpired()
   {
@@ -302,7 +314,7 @@ class UsersAuthTest extends TestCase
           'password' => Hash::make('123456aa'),
       ])->create();
 
-    $this->service->forgetPassword($user->login);
+    $this->service->forgetPassword(ForgetPasswordUsersDto::make(['login' => $user->login]));
 
     Users::find($user->id)->update([
          'remember_token_at' => Carbon::now()
@@ -314,13 +326,13 @@ class UsersAuthTest extends TestCase
     $this->expectException(\App\Exceptions\Exception::class);
     $this->expectExceptionCode(\App\Exceptions\Exception::RECOVERY_PASSWORD_TOKEN_EXPIRED);
 
-    $this->service->checkTokenRecoveryPasswordValid([
-         'token' => Users::find($user->id)->remember_token,
-      ]);
+    $this->service->verifyRememberPassword(VerifyRememberPasswordUsersDto::make([
+         'remember_token' => Users::find($user->id)->remember_token,
+      ]));
   }
 
   /**
-   * @testdox checkTokenRecoveryPasswordValid - Verificar se token é valido (valido)
+   * @testdox verifyRememberPassword - Verificar se token é valido (valido)
    */
   public function testCheckTokenForgetPasswordValidIsValid()
   {
@@ -328,7 +340,7 @@ class UsersAuthTest extends TestCase
           'password' => Hash::make('123456aa'),
       ])->create();
 
-    $this->service->forgetPassword($user->login);
+    $this->service->forgetPassword(ForgetPasswordUsersDto::make(['login' => $user->login]));
 
     Users::find($user->id)->update([
          'remember_token_at' => Carbon::now()
@@ -337,10 +349,10 @@ class UsersAuthTest extends TestCase
       ]);
 
     $remember_token = Users::find($user->id)->remember_token;
-    $tokenValid = $this->service->checkTokenRecoveryPasswordValid([
-         'token' => Users::find($user->id)->remember_token,
-      ]);
+    $tokenValid = $this->service->verifyRememberPassword(VerifyRememberPasswordUsersDto::make([
+         'remember_token' => Users::find($user->id)->remember_token,
+      ]));
 
-    $this->assertEquals($remember_token, $tokenValid['token']);
+    $this->assertEquals($remember_token, $tokenValid['remember_token']);
   }
 }

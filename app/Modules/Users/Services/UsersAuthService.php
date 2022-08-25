@@ -4,6 +4,12 @@ namespace App\Modules\Users\Services;
 
 use App\Core\Users\Models\UsersTokens;
 use App\Models\User;
+use App\Modules\Users\Dto\ResetPasswordUsersDto;
+use App\Modules\Users\Dto\ForgetPasswordUsersDto;
+use App\Modules\Users\Dto\LoginUsersDto;
+use App\Modules\Users\Dto\LogoutUsersDto;
+use App\Modules\Users\Dto\TokenVerifyUsersDto;
+use App\Modules\Users\Dto\VerifyRememberPasswordUsersDto;
 use App\Modules\Users\Models\Users;
 use Carbon\Carbon;
 use App\Exceptions\Exception;
@@ -18,27 +24,25 @@ class UsersAuthService
     public function __construct(
         protected \App\Modules\Users\Transformers\UsersTransformer $transformer,
         protected \App\Modules\Users\Repositories\UsersRepository $repository,
-        protected \App\Modules\Users\Repositories\UsersAccessTokensRepository $usersTokensRepository,
-        protected \App\Modules\Users\Validators\UsersValidator $validator
+        protected \App\Modules\Users\Repositories\UsersAccessTokensRepository $usersTokensRepository
     ) {}
 
     /**
-     * @param $data
+     * @param LoginUsersDto $data
      * @return mixed
      * @throws \Devesharp\Exceptions\Exception
      */
-    public function login($data)
+    public function login(LoginUsersDto $data)
     {
-        $credentials = $this->validator->login($data);
 
         $dataEmail = [
-            'email' => $credentials['login'],
-            'password' => $credentials['password'],
+            'email' => $data['login'],
+            'password' => $data['password'],
         ];
 
         $dataLogin = [
-            'login' => $credentials['login'],
-            'password' => $credentials['password'],
+            'login' => $data['login'],
+            'password' => $data['password'],
         ];
 
         $token = auth()->setTTL(60 * 60 * 24 * 365)->attempt($dataLogin);
@@ -76,10 +80,10 @@ class UsersAuthService
         return Transformer::item($user, $this->transformer);
     }
 
-    public function checkValidToken($token): bool
+    public function checkValidToken(TokenVerifyUsersDto $data): bool
     {
         try {
-            $apy = JWTAuth::setToken($token)
+            $apy = JWTAuth::setToken($data['access_token'])
                 ->getPayload()
                 ->toArray();
         } catch (\Exception $e) {
@@ -100,13 +104,15 @@ class UsersAuthService
     }
 
     /**
-     * @param string $login
+     * @param ForgetPasswordUsersDto $data
      * @param null $token
      * @return array
      * @throws Exception
      */
-    public function forgetPassword(string $login, $token = null)
+    public function forgetPassword(ForgetPasswordUsersDto $data, $token = null)
     {
+        $login = $data['login'];
+
         $token = $token ?? base64_encode(uniqid(rand(), true) . "-" . date("YmdHis"));
 
         if (empty($login)) {
@@ -138,13 +144,13 @@ class UsersAuthService
     }
 
     /**
-     * @param array $data
+     * @param VerifyRememberPasswordUsersDto $data
      * @return array
      * @throws \Devesharp\Exceptions\Exception
      */
-    public function checkTokenRecoveryPasswordValid(array $data)
+    public function verifyRememberPassword(VerifyRememberPasswordUsersDto $data)
     {
-        $token = $data['token'];
+        $token = $data['remember_token'];
 
         if (empty($token)) {
             Exception::Exception(Exception::RECOVERY_PASSWORD_TOKEN_INVALID);
@@ -167,6 +173,10 @@ class UsersAuthService
             Exception::Exception(Exception::RECOVERY_PASSWORD_TOKEN_INVALID);
         }
 
+        if (empty($user[0]->remember_token_at)) {
+            Exception::Exception(Exception::RECOVERY_PASSWORD_TOKEN_INVALID);
+        }
+
         $tokenGenerateAt = Carbon::make($user[0]->remember_token_at);
 
         if (Carbon::now()->greaterThan($tokenGenerateAt->addDays(1))) {
@@ -174,21 +184,20 @@ class UsersAuthService
         }
 
         return [
-            'token' => $token,
+            'valid' => true,
+            'remember_token' => $token,
         ];
     }
 
     /**
      * Mudar Senha da conta pelo token de esqueci a Senha.
      *
-     * @param array $data
+     * @param ResetPasswordUsersDto $data
      * @return bool[]
      * @throws Exception
      */
-    public function changePasswordByToken(array $data)
+    public function changePasswordByToken(ResetPasswordUsersDto $data)
     {
-        $data = $this->validator->changePasswordByToken($data);
-
         $user = $this->repository
             ->clearQuery()
             ->whereSameString("remember_token", $data["remember_token"])
@@ -200,7 +209,7 @@ class UsersAuthService
         }
 
         $user->remember_token = null;
-        $user->password = Hash::make($data["password"]);
+        $user->password = Hash::make($data["new_password"]);
         $user->update();
 
         return [
@@ -211,7 +220,7 @@ class UsersAuthService
     /**
      * @return bool[]
      */
-    public function logout()
+    public function logout(LogoutUsersDto $data, $user)
     {
         $token = auth()->payload()['t'];
 

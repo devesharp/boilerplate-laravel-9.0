@@ -17,7 +17,7 @@ class CreateUsersAccessTokensTable extends Migration
             $table->id();
             $table->boolean('enabled')->default(true);
             $table->unsignedBigInteger('user_id');
-            $table->mediumText('token');
+            $table->integer('token');
             $table->timestamp('used_at')->nullable();
             $table->timestamp('logout_at')->nullable();
             $table->timestamps();
