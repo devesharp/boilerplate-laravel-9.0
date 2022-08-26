@@ -1,0 +1,34 @@
+name: Test Unit
+
+on:
+   push:
+
+jobs:
+   test:
+      runs-on: ubuntu-latest
+
+      steps:
+         -  uses: actions/checkout@v1
+
+         -  name: Validate composer.json and composer.lock
+            run: composer validate
+
+         -  name: Docker version
+            run: docker version
+
+         -  name: Docker compose version
+            run: docker-compose version
+
+         -  name: Copy Env
+            run: cp .env.example .env
+
+         -  name: Start containers
+            run: docker-compose -f docker-compose.test.yml up -d --build
+
+         -  name: Wait database start
+            run: docker exec test dockerize -wait tcp://db:3306 -timeout 30s
+            continue-on-error: true
+
+         -  name: Testing
+            run: docker exec test ./vendor/bin/phpunit --colors=always
+            timeout-minutes: 20

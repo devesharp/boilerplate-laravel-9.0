@@ -1,0 +1,19 @@
+version: '3.7'
+
+services:
+  test:
+    container_name: test
+    depends_on:
+      - db
+    build:
+      target: test
+      context: .
+    ports:
+      - "8002:80"
+    volumes:
+      - .env.ci:/app/.env
+  db:
+    image: devesharp/mariadb:10.6.1
+    environment:
+      MYSQL_ROOT_PASSWORD: 123456
+      MARIADB_MULTIPLE_DATABASE: develop,testing
