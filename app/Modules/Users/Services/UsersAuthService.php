@@ -18,6 +18,7 @@ use Devesharp\Patterns\Transformer\Transformer;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Str;
 use PHPOpenSourceSaver\JWTAuth\Facades\JWTAuth;
+use Symfony\Component\HttpKernel\EventListener\ValidateRequestListener;
 
 class UsersAuthService
 {

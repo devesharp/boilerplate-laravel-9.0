@@ -319,8 +319,7 @@ class UsersAuthTest extends TestCase
     Users::find($user->id)->update([
          'remember_token_at' => Carbon::now()
             ->subDay(1)
-            ->subMinutes(1)
-            ->format('YmdHis'),
+            ->subMinutes(1),
       ]);
 
     $this->expectException(\App\Exceptions\Exception::class);

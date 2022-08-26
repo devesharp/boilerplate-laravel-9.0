@@ -2,6 +2,7 @@
 
 namespace Tests\Routes\Users;
 
+use App\Modules\Users\Docs\UsersAuthRouteDoc;
 use App\Modules\Users\Dto\LogoutUsersDto;
 use App\Modules\Users\Dto\ResetPasswordUsersDto;
 use App\Modules\Users\Dto\ForgetPasswordUsersDto;
@@ -9,7 +10,6 @@ use App\Modules\Users\Dto\LoginUsersDto;
 use App\Modules\Users\Dto\TokenVerifyUsersDto;
 use App\Modules\Users\Dto\VerifyRememberPasswordUsersDto;
 use App\Modules\Users\Models\Users;
-use App\Modules\Users\Validators\UsersValidator;
 use Carbon\Carbon;
 use Illuminate\Support\Facades\Hash;
 use PHPOpenSourceSaver\JWTAuth\Facades\JWTAuth;
@@ -63,7 +63,7 @@ class UserAuthRouteTest extends \Tests\TestCase
         ])->create();
 
         $response = $this->withPost('/v1/auth/login')
-            ->addRouteName('Login')
+            ->setRouteInfo('Login', UsersAuthRouteDoc::class)
             ->addGroups(['auth'])
             ->addBody([
                 'login' => $user->login,
@@ -88,7 +88,7 @@ class UserAuthRouteTest extends \Tests\TestCase
         $user->access_token = JWTAuth::fromUser($user);
 
         $response = $this->withPost('/v1/auth/check')
-            ->addRouteName('AuthCheck')
+            ->setRouteInfo('AuthCheck', UsersAuthRouteDoc::class)
             ->addGroups(['auth'])
             ->addHeader('Authorization', 'Bearer ' . $user->access_token, 'Authorization')
             ->run();
@@ -107,7 +107,7 @@ class UserAuthRouteTest extends \Tests\TestCase
         $user = Users::factory()->create();
 
         $response = $this->withPost('/v1/auth/password-recover')
-            ->addRouteName('AuthCheck')
+            ->setRouteInfo('AuthCheck', UsersAuthRouteDoc::class)
             ->addGroups(['auth'])
             ->addBody([
                 'login' => $user->login,
@@ -130,7 +130,7 @@ class UserAuthRouteTest extends \Tests\TestCase
         ])->create();
 
         $response = $this->withPost('/v1/auth/password-reset')
-            ->addRouteName('PasswordReset')
+            ->setRouteInfo('PasswordReset', UsersAuthRouteDoc::class)
             ->addGroups(['auth'])
             ->addBody([
                 'remember_token' => $user->remember_token,
@@ -158,7 +158,7 @@ class UserAuthRouteTest extends \Tests\TestCase
         ])->create();
 
         $response = $this->withPost('/v1/auth/verify-remember-token')
-            ->addRouteName('VerifyRememberToken')
+            ->setRouteInfo('VerifyRememberToken', UsersAuthRouteDoc::class)
             ->addGroups(['auth'])
             ->addBody([
                 'remember_token' => $user->remember_token,
@@ -183,7 +183,7 @@ class UserAuthRouteTest extends \Tests\TestCase
 
         $response = $this->withPost('/v1/auth/logout')
             ->addHeader('Authorization', 'Bearer ' . $user->access_token, 'Authorization')
-            ->addRouteName('Logout')
+            ->setRouteInfo('Logout', UsersAuthRouteDoc::class)
             ->addGroups(['auth'])
             ->addBody([
             ], LogoutUsersDto::class)

@@ -29,7 +29,6 @@ class UsersTransformer extends Transformer
         $transform = [];
 
         $transform['id'] = (string) $model->id;
-        $transform['access_token'] = $model->access_token ?? null;
         $transform['name'] = (string) $model->name;
         $transform['role'] = (string) $model->role;
         $transform['login'] = (string) $model->login;
@@ -39,6 +38,10 @@ class UsersTransformer extends Transformer
         $transform['image'] = (string) $model->image;
         $transform['updated_at'] = (string) $model->updated_at;
         $transform['created_at'] = (string) $model->created_at;
+
+        if (!empty($model->access_token)) {
+            $transform['access_token'] = $model->access_token;
+        }
 
         return $transform;
     }

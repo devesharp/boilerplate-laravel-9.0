@@ -5,8 +5,10 @@ namespace Tests\Unit\Users;
 use App\Modules\Users\Dto\CreateUsersDto;
 use App\Modules\Users\Dto\SearchUsersDto;
 use App\Modules\Users\Dto\UpdateUsersDto;
+use App\Modules\Users\Interfaces\UsersPermissions;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Support\Facades\Hash;
+use Silber\Bouncer\Bouncer;
 use Tests\TestCase;
 use \App\Modules\Users\Models\Users;
 use \App\Modules\Users\Services\UsersService;
@@ -31,6 +33,8 @@ class UsersTest extends TestCase
         $userAdmin = Users::factory()->create();
         $UsersData = Users::factory()->raw();
 
+        $userAdmin->allow([UsersPermissions::USERS_CREATE]);
+
         $resource = $this->service->create(CreateUsersDto::make($UsersData), $userAdmin);
 
         $this->assertGreaterThanOrEqual(1, $resource['id']);
@@ -44,6 +48,8 @@ class UsersTest extends TestCase
     {
         $userAdmin = Users::factory()->create();
         $UsersData = Users::factory()->raw();
+
+        $userAdmin->allow([UsersPermissions::USERS_CREATE, UsersPermissions::USERS_UPDATE]);
 
         $resource = $this->service->create(CreateUsersDto::make($UsersData), $userAdmin);
 
@@ -62,6 +68,8 @@ class UsersTest extends TestCase
         $userAdmin = Users::factory()->create();
         $UsersData = Users::factory()->raw();
 
+        $userAdmin->allow([UsersPermissions::USERS_CREATE, UsersPermissions::USERS_VIEW]);
+
         $resourceCreated = $this->service->create(CreateUsersDto::make($UsersData), $userAdmin);
 
         $resource = $this->service->get($resourceCreated->id, $userAdmin);
@@ -77,6 +85,8 @@ class UsersTest extends TestCase
     {
         $userAdmin = Users::factory()->create();
         Users::factory()->count(5)->create();
+
+        $userAdmin->allow([UsersPermissions::USERS_CREATE, UsersPermissions::USERS_SEARCH]);
 
         $results = $this->service->search(SearchUsersDto::make([
             "filters" => [
@@ -94,6 +104,8 @@ class UsersTest extends TestCase
     {
         $userAdmin = Users::factory()->create();
         $UsersData = Users::factory()->raw();
+
+        $userAdmin->allow([UsersPermissions::USERS_CREATE, UsersPermissions::USERS_DELETE]);
 
         $resource = $this->service->create(CreateUsersDto::make($UsersData), $userAdmin);
 

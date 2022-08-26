@@ -11,7 +11,8 @@
         "laravel/framework": "^9.19",
         "laravel/sanctum": "^3.0",
         "laravel/tinker": "^2.7",
-        "php-open-source-saver/jwt-auth": "^1.4"
+        "php-open-source-saver/jwt-auth": "^1.4",
+        "silber/bouncer": "^1.0"
     },
     "repositories": [{
         "type": "path",
@@ -39,6 +40,7 @@
         }
     },
     "scripts": {
+        "generate:api:docs": "./vendor/bin/generate-swagger",
         "post-autoload-dump": [
             "Illuminate\\Foundation\\ComposerScripts::postAutoloadDump",
             "@php artisan package:discover --ansi"

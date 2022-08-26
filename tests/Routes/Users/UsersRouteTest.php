@@ -2,11 +2,13 @@
 
 namespace Tests\Routes\Users;
 
+use \App\Modules\Users\Docs\UsersRouteDoc;
 use App\Modules\Users\Dto\ChangePasswordDtoUsersDto;
 use App\Modules\Users\Dto\CreateUsersDto;
 use App\Modules\Users\Dto\LoginUsersDto;
 use App\Modules\Users\Dto\SearchUsersDto;
 use App\Modules\Users\Dto\UpdateUsersDto;
+use App\Modules\Users\Interfaces\UsersPermissions;
 use App\Modules\Users\Models\Users;
 use Illuminate\Support\Facades\Hash;
 use Tests\TestCase;
@@ -21,12 +23,14 @@ class UsersRouteTest extends TestCase
     {
         $user = Users::factory()->create();
         $user->access_token = JWTAuth::fromUser($user);
+        $user->allow([UsersPermissions::USERS_CREATE, UsersPermissions::USERS_VIEW]);
+
         $UsersData = Users::factory()->raw();
 
         $response = $this->withPost('/v1/users')
-            ->addRouteName('CreateUsers')
+            ->setRouteInfo('CreateUsers', UsersRouteDoc::class)
             ->addHeader('Authorization', 'Bearer ' . $user->access_token, 'Authorization')
-            ->addGroups(['Users'])
+            ->addGroups(['Usuários'])
             ->addBody($UsersData, CreateUsersDto::class)
             ->run();
 
@@ -44,14 +48,16 @@ class UsersRouteTest extends TestCase
     {
         $user = Users::factory()->create();
         $user->access_token = JWTAuth::fromUser($user);
+        $user->allow([UsersPermissions::USERS_CREATE, UsersPermissions::USERS_UPDATE, UsersPermissions::USERS_VIEW]);
+
         $UsersData = Users::factory()->raw();
         $resource = Users::factory()->create();
 
         $response = $this->withPost('/v1/users/:id')
             ->addPath('id', $resource->id, 'Id do Usuário')
-            ->addRouteName('UpdateUsers')
+            ->setRouteInfo('UpdateUsers', UsersRouteDoc::class)
             ->addHeader('Authorization', 'Bearer ' . $user->access_token, 'Authorization')
-            ->addGroups(['Users'])
+            ->addGroups(['Usuários'])
             ->addBody($UsersData, UpdateUsersDto::class)
             ->run();
 
@@ -69,14 +75,16 @@ class UsersRouteTest extends TestCase
     {
         $user = Users::factory()->create();
         $user->access_token = JWTAuth::fromUser($user);
+        $user->allow([UsersPermissions::USERS_CREATE, UsersPermissions::USERS_VIEW]);
 
         $resource = Users::factory()->create();
 
         $response = $this->withGet('/v1/users/:id')
+            ->setRouteInfo('GetUsers', UsersRouteDoc::class)
             ->addPath('id', $resource->id, 'Id do Usuário')
-            ->addRouteName('GetUsers')
+            ->setRouteInfo('GetUsers', UsersRouteDoc::class)
             ->addHeader('Authorization', 'Bearer ' . $user->access_token, 'Authorization')
-            ->addGroups(['Users'])
+            ->addGroups(['Usuários'])
             ->run();
 
         $responseData = json_decode($response->getContent(), true);
@@ -93,13 +101,15 @@ class UsersRouteTest extends TestCase
     {
         $user = Users::factory()->create();
         $user->access_token = JWTAuth::fromUser($user);
+        $user->allow([UsersPermissions::USERS_CREATE]);
+
         $UsersData = Users::factory()->raw();
         $resource = Users::factory()->create();
 
         $response = $this->withPost('/v1/users/me')
-            ->addRouteName('UpdateUsersMe')
+            ->setRouteInfo('UpdateUsersMe', UsersRouteDoc::class)
             ->addHeader('Authorization', 'Bearer ' . $user->access_token, 'Authorization')
-            ->addGroups(['Users'])
+            ->addGroups(['Usuários'])
             ->addBody($UsersData, UpdateUsersDto::class)
             ->run();
 
@@ -117,11 +127,12 @@ class UsersRouteTest extends TestCase
     {
         $user = Users::factory()->create();
         $user->access_token = JWTAuth::fromUser($user);
+        $user->allow([UsersPermissions::USERS_CREATE, UsersPermissions::USERS_VIEW]);
 
         $response = $this->withGet('/v1/users/me')
-            ->addRouteName('GetUsersMe')
+            ->setRouteInfo('GetUsersMe', UsersRouteDoc::class)
             ->addHeader('Authorization', 'Bearer ' . $user->access_token, 'Authorization')
-            ->addGroups(['Users'])
+            ->addGroups(['Usuários'])
             ->run();
 
         $responseData = json_decode($response->getContent(), true);
@@ -138,12 +149,14 @@ class UsersRouteTest extends TestCase
     {
         $user = Users::factory()->create();
         $user->access_token = JWTAuth::fromUser($user);
+        $user->allow([UsersPermissions::USERS_CREATE, UsersPermissions::USERS_SEARCH]);
+
         Users::factory()->count(3)->create();
 
         $response = $this->withPost('/v1/users/search')
-            ->addRouteName('SearchUsers')
+            ->setRouteInfo('SearchUsers', UsersRouteDoc::class)
             ->addHeader('Authorization', 'Bearer ' . $user->access_token, 'Authorization')
-            ->addGroups(['Users'])
+            ->addGroups(['Usuários'])
             ->addBody([
                 'filters' => [
                 ]
@@ -164,14 +177,15 @@ class UsersRouteTest extends TestCase
     {
         $user = Users::factory()->create();
         $user->access_token = JWTAuth::fromUser($user);
+        $user->allow([UsersPermissions::USERS_CREATE, UsersPermissions::USERS_DELETE]);
 
         $resource = Users::factory()->create();
 
         $response = $this->withDelete('/v1/users/:id')
             ->addPath('id', $resource->id, 'Id do Usuário')
-            ->addRouteName('GetUsers')
+            ->setRouteInfo('GetUsers', UsersRouteDoc::class)
             ->addHeader('Authorization', 'Bearer ' . $user->access_token, 'Authorization')
-            ->addGroups(['Users'])
+            ->addGroups(['Usuários'])
             ->run();
 
         $responseData = json_decode($response->getContent(), true);
@@ -195,9 +209,9 @@ class UsersRouteTest extends TestCase
         $resource = Users::factory()->create();
 
         $response = $this->withPost('/v1/users/change-password')
-            ->addRouteName('ChangePasswordUsers')
+            ->setRouteInfo('ChangePasswordUsers', UsersRouteDoc::class)
             ->addHeader('Authorization', 'Bearer ' . $user->access_token, 'Authorization')
-            ->addGroups(['Users'])
+            ->addGroups(['Usuários'])
             ->addBody([
                 'old_password' => '123456aa',
                 'new_password' => 'newPassword',
