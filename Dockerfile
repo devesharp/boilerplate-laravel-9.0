@@ -11,15 +11,13 @@ WORKDIR /app
 COPY . /app
 COPY ./public /app/html
 COPY --from=composer /usr/bin/composer /usr/local/bin/composer
-RUN composer install --no-dev --no-scripts
-RUN composer dump-autoload -o
+RUN composer install
+#RUN composer dump-autoload -o
 
 # ------------------------
 # Create App
 # ------------------------
 FROM devesharp/nginx:php-8.1-alpine as app
-RUN set -ex && apk --no-cache add postgresql-dev
-RUN docker-php-ext-install pdo_pgsql
 COPY --from=build /app .
 RUN chown -R www-data:www-data /app
 

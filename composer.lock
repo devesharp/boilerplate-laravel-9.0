@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "b51d5f3408e34e184211604da00371eb",
+    "content-hash": "2819d6db83f6603cedd03630b9cf483a",
     "packages": [
         {
             "name": "adbario/php-dot-notation",
@@ -112,16 +112,16 @@
         },
         {
             "name": "aws/aws-sdk-php",
-            "version": "3.234.3",
+            "version": "3.234.4",
             "source": {
                 "type": "git",
                 "url": "https://github.com/aws/aws-sdk-php.git",
-                "reference": "21ee9e4181c1e676b43018bd3743dd4c9f8bafc2"
+                "reference": "8d56ddb99632200273bb933cbf82b758ab9cde2a"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/aws/aws-sdk-php/zipball/21ee9e4181c1e676b43018bd3743dd4c9f8bafc2",
-                "reference": "21ee9e4181c1e676b43018bd3743dd4c9f8bafc2",
+                "url": "https://api.github.com/repos/aws/aws-sdk-php/zipball/8d56ddb99632200273bb933cbf82b758ab9cde2a",
+                "reference": "8d56ddb99632200273bb933cbf82b758ab9cde2a",
                 "shasum": ""
             },
             "require": {
@@ -198,9 +198,9 @@
             "support": {
                 "forum": "https://forums.aws.amazon.com/forum.jspa?forumID=80",
                 "issues": "https://github.com/aws/aws-sdk-php/issues",
-                "source": "https://github.com/aws/aws-sdk-php/tree/3.234.3"
+                "source": "https://github.com/aws/aws-sdk-php/tree/3.234.4"
             },
-            "time": "2022-08-25T18:30:13+00:00"
+            "time": "2022-08-26T18:20:48+00:00"
         },
         {
             "name": "brick/math",
@@ -395,11 +395,17 @@
         },
         {
             "name": "devesharp/pattern",
-            "version": "dev-master",
+            "version": "1.0.6",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/devesharp/php-pattern.git",
+                "reference": "f3d164aff317c86f2d7ba0f2ff363a769e3d5241"
+            },
             "dist": {
-                "type": "path",
-                "url": "/Volumes/Ammar/albertoammar/workspace/devesharp/php/pattern",
-                "reference": "ddfdf7c3b3454389356e53c0e8acd6e9e454212c"
+                "type": "zip",
+                "url": "https://api.github.com/repos/devesharp/php-pattern/zipball/f3d164aff317c86f2d7ba0f2ff363a769e3d5241",
+                "reference": "f3d164aff317c86f2d7ba0f2ff363a769e3d5241",
+                "shasum": ""
             },
             "require": {
                 "adbario/php-dot-notation": "^3.1",
@@ -421,15 +427,12 @@
                     "Devesharp\\": "src/"
                 }
             },
-            "autoload-dev": {
-                "psr-4": {
-                    "Devesharp\\": "src/",
-                    "Tests\\": "tests/"
-                }
+            "notification-url": "https://packagist.org/downloads/",
+            "support": {
+                "issues": "https://github.com/devesharp/php-pattern/issues",
+                "source": "https://github.com/devesharp/php-pattern/tree/1.0.6"
             },
-            "transport-options": {
-                "relative": false
-            }
+            "time": "2022-08-26T19:55:07+00:00"
         },
         {
             "name": "dflydev/dot-access-data",
@@ -10269,9 +10272,7 @@
     ],
     "aliases": [],
     "minimum-stability": "dev",
-    "stability-flags": {
-        "devesharp/pattern": 20
-    },
+    "stability-flags": [],
     "prefer-stable": true,
     "prefer-lowest": false,
     "platform": {
