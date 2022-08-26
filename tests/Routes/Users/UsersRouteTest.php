@@ -91,7 +91,7 @@ class UsersRouteTest extends TestCase
 
         $response->assertStatus(200);
         $this->assertTrue($responseData['success']);
-        $this->assertEqualsArrayLeft($resource->getAttributes(), $responseData['data'], ['password']);
+        $this->assertEqualsArrayLeft($resource->getAttributes(), $responseData['data'], ['password', 'created_at', 'updated_at']);
     }
 
     /**
@@ -139,7 +139,7 @@ class UsersRouteTest extends TestCase
 
         $response->assertStatus(200);
         $this->assertTrue($responseData['success']);
-        $this->assertEqualsArrayLeft($user->getAttributes(), $responseData['data'], ['password', 'access_token']);
+        $this->assertEqualsArrayLeft($user->getAttributes(), $responseData['data'], ['password', 'access_token', 'created_at', 'updated_at']);
     }
 
     /**

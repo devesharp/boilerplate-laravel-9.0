@@ -2,6 +2,9 @@
 
 namespace App\Modules\Users\Transformers;
 
+use App\Supports\Formatters\CPFFormatter;
+use App\Supports\Formatters\DateTimeBrFormatter;
+use App\Supports\Formatters\RGFormatter;
 use Devesharp\Patterns\Transformer\Transformer;
 use \App\Modules\Users\Models\Users;
 
@@ -33,11 +36,11 @@ class UsersTransformer extends Transformer
         $transform['role'] = (string) $model->role;
         $transform['login'] = (string) $model->login;
         $transform['email'] = (string) $model->email;
-        $transform['document'] = (string) $model->document;
-        $transform['CPF'] = (string) $model->CPF;
+        $transform['document'] = format(RGFormatter::class, (string) $model->document);
+        $transform['CPF'] = format(CPFFormatter::class, $model->CPF);
         $transform['image'] = (string) $model->image;
-        $transform['updated_at'] = (string) $model->updated_at;
-        $transform['created_at'] = (string) $model->created_at;
+        $transform['updated_at'] = format(DateTimeBrFormatter::class, $model->updated_at);
+        $transform['created_at'] = format(DateTimeBrFormatter::class, $model->created_at);
 
         if (!empty($model->access_token)) {
             $transform['access_token'] = $model->access_token;
