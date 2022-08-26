@@ -2,6 +2,7 @@
 
 namespace Tests\Routes\Users;
 
+use App\Modules\Uploads\Services\UploadsAWSService;
 use \App\Modules\Users\Docs\UsersRouteDoc;
 use App\Modules\Users\Dto\ChangePasswordDtoUsersDto;
 use App\Modules\Users\Dto\CreateUsersDto;
@@ -10,7 +11,10 @@ use App\Modules\Users\Dto\SearchUsersDto;
 use App\Modules\Users\Dto\UpdateUsersDto;
 use App\Modules\Users\Interfaces\UsersPermissions;
 use App\Modules\Users\Models\Users;
+use Illuminate\Http\UploadedFile;
 use Illuminate\Support\Facades\Hash;
+use Mockery\Mock;
+use Mockery\MockInterface;
 use Tests\TestCase;
 use PHPOpenSourceSaver\JWTAuth\Facades\JWTAuth;
 
@@ -195,7 +199,6 @@ class UsersRouteTest extends TestCase
         $this->assertTrue(!!$responseData['data']);
     }
 
-
     /**
      * @testdox [POST]  /v1/users/change-password
      */
@@ -223,5 +226,40 @@ class UsersRouteTest extends TestCase
         $this->assertTrue($body['success']);
         $this->assertTrue($body['data']['changed']);
         $this->assertTrue(Hash::check('newPassword', Users::find($user->id)->password));
+    }
+
+    /**
+     * @testdox [POST]  /v1/users/upload-avatar
+     */
+    public function testUsersUploadAvatar()
+    {
+        $user = Users::factory([
+            'password' => Hash::make('123456aa'),
+        ])->create();
+        $user->access_token = JWTAuth::fromUser($user);
+
+        $mock = $this->mock(UploadsAWSService::class, function (MockInterface $mock) {
+            $mock->shouldReceive('uploadPublicFile')->once()->andReturn([
+                "key" => "avatar/image.png",
+                "url" => "https://example.s3.us-east-2.amazonaws.com/avatar/image.png"
+            ]);
+        });
+
+        $resource = Users::factory()->create();
+
+        $response = $this->withPost('/v1/users/upload-avatar')
+            ->setRouteInfo('Upload', UsersRouteDoc::class)
+            ->addHeader('Authorization', 'Bearer ' . $user->access_token, 'Authorization')
+            ->addGroups(['Usuários'])
+            ->addBody([
+                'file' => UploadedFile::fake()->image('avatar.jpg')
+            ])
+            ->run();
+
+        $body = json_decode((string) $response->getContent(), true);
+
+        $this->assertTrue($body['success']);
+        $this->assertEquals("avatar/image.png", $body['data']['key']);
+        $this->assertEquals("https://example.s3.us-east-2.amazonaws.com/avatar/image.png", $body['data']['url']);
     }
 }

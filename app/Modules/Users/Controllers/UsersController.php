@@ -6,6 +6,7 @@ use App\Modules\Users\Dto\ChangePasswordDtoUsersDto;
 use App\Modules\Users\Dto\CreateUsersDto;
 use App\Modules\Users\Dto\SearchUsersDto;
 use App\Modules\Users\Dto\UpdateUsersDto;
+use App\Modules\Users\Dto\UploadAvatarDtoUsersDto;
 use Devesharp\Patterns\Controller\ControllerBase;
 
 class UsersController extends ControllerBase
@@ -49,6 +50,11 @@ class UsersController extends ControllerBase
     public function changePassword()
     {
         return $this->service->changePassword(ChangePasswordDtoUsersDto::make(request()->all()), $this->auth, 'default');
+    }
+
+    public function uploadAvatar()
+    {
+        return $this->service->upload(UploadAvatarDtoUsersDto::make(request()->all()), $this->auth, 'default');
     }
 
     public function delete($id)

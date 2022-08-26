@@ -4,16 +4,20 @@ namespace App\Modules\Users\Services;
 
 use App\Core\Users\Models\Users;
 use App\Exceptions\Exception;
+use App\Modules\Uploads\Services\UploadsAWSService;
 use App\Modules\Users\Dto\ChangePasswordDtoUsersDto;
 use App\Modules\Users\Dto\CreateUsersDto;
 use App\Modules\Users\Dto\SearchUsersDto;
 use App\Modules\Users\Dto\UpdateUsersDto;
+use App\Modules\Users\Dto\UploadAvatarDtoUsersDto;
 use Devesharp\Patterns\Service\Service;
 use Devesharp\Patterns\Service\ServiceFilterEnum;
 use Devesharp\Patterns\Transformer\Transformer;
 use Devesharp\Support\Collection;
+use Illuminate\Http\File;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Facades\Storage;
 
 class UsersService extends Service
 {
@@ -275,5 +279,29 @@ class UsersService extends Service
         return [
             'changed' => true,
         ];
+    }
+
+    /**
+     * Atualizar avatar do usuário
+     *
+     * @param UploadAvatarDtoUsersDto $data
+     * @param $user
+     * @return bool[]
+     * @throws \Devesharp\Exceptions\Exception
+     */
+    public function upload(UploadAvatarDtoUsersDto $data, $user)
+    {
+        /** @var File $file */
+        $file = $data->file;
+        $name = base64_encode($user->id . '-' . sha1($user->id));
+        $filePath = 'avatar/' . $name . '.png';
+
+        $response = app(UploadsAWSService::class)->uploadPublicFile($filePath, $file, $file->getMimeType());
+
+        $this->repository->clearQuery()->updateById($user->id, [
+            'image' => $response['key'],
+        ]);
+
+        return $response;
     }
 }
