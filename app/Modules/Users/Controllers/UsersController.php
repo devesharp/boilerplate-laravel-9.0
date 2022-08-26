@@ -59,7 +59,7 @@ class UsersController extends ControllerBase
 
     public function uploadAvatarMe()
     {
-        return $this->service->uploadAvatar2($this->auth->id, UploadAvatarDtoUsersDto::make(request()->all()), $this->auth, 'default');
+        return $this->service->uploadAvatar($this->auth->id, UploadAvatarDtoUsersDto::make(request()->all()), $this->auth, 'default');
     }
 
     public function delete($id)
