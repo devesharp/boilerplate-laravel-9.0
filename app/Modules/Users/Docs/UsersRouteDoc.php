@@ -17,6 +17,8 @@ class UsersRouteDoc extends RoutesDocAbstract
             'UpdateUsersMe' => new RoutesDocInfo("Atualizar usuário atual", ""),
             'GetUsersMe' => new RoutesDocInfo("Resgatar usuário atual", ""),
             'ChangePasswordUsers' => new RoutesDocInfo("Mudar senha", ""),
+            'UploadAvatar' => new RoutesDocInfo("Upload de avatar", ""),
+            'UploadAvatarMe' => new RoutesDocInfo("Upload de avatar usuário atual", ""),
             default => new RoutesDocInfo("", ""),
         };
     }

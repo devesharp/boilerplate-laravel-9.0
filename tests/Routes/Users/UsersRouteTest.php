@@ -237,8 +237,9 @@ class UsersRouteTest extends TestCase
             'password' => Hash::make('123456aa'),
         ])->create();
         $user->access_token = JWTAuth::fromUser($user);
+        $user->allow([UsersPermissions::USERS_UPDATE]);
 
-        $mock = $this->mock(UploadsAWSService::class, function (MockInterface $mock) {
+        $this->mock(UploadsAWSService::class, function (MockInterface $mock) {
             $mock->shouldReceive('uploadPublicFile')->once()->andReturn([
                 "key" => "avatar/image.png",
                 "url" => "https://example.s3.us-east-2.amazonaws.com/avatar/image.png"
@@ -247,8 +248,45 @@ class UsersRouteTest extends TestCase
 
         $resource = Users::factory()->create();
 
-        $response = $this->withPost('/v1/users/upload-avatar')
-            ->setRouteInfo('Upload', UsersRouteDoc::class)
+        $response = $this->withPost('/v1/users/:id/upload-avatar')
+            ->setRouteInfo('UploadAvatar', UsersRouteDoc::class)
+            ->addPath('id', $resource->id, 'Id do Usuário')
+            ->addHeader('Authorization', 'Bearer ' . $user->access_token, 'Authorization')
+            ->addGroups(['Usuários'])
+            ->addBody([
+                'file' => UploadedFile::fake()->image('avatar.jpg')
+            ])
+            ->run();
+
+        $body = json_decode((string) $response->getContent(), true);
+
+        $this->assertTrue($body['success']);
+        $this->assertEquals("avatar/image.png", $body['data']['key']);
+        $this->assertEquals("https://example.s3.us-east-2.amazonaws.com/avatar/image.png", $body['data']['url']);
+    }
+
+    /**
+     * @testdox [POST]  /v1/users/me/upload-avatar
+     */
+    public function testUsersUploadAvatarMe()
+    {
+        $user = Users::factory([
+            'password' => Hash::make('123456aa'),
+        ])->create();
+        $user->access_token = JWTAuth::fromUser($user);
+
+        $this->mock(UploadsAWSService::class, function (MockInterface $mock) {
+            $mock->shouldReceive('uploadPublicFile')->once()->andReturn([
+                "key" => "avatar/image.png",
+                "url" => "https://example.s3.us-east-2.amazonaws.com/avatar/image.png"
+            ]);
+        });
+
+        $resource = Users::factory()->create();
+
+        $response = $this->withPost('/v1/users/me/upload-avatar')
+            ->setRouteInfo('UploadAvatarMe', UsersRouteDoc::class)
+            ->addPath('id', $resource->id, 'Id do Usuário')
             ->addHeader('Authorization', 'Bearer ' . $user->access_token, 'Authorization')
             ->addGroups(['Usuários'])
             ->addBody([

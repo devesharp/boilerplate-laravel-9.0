@@ -52,9 +52,14 @@ class UsersController extends ControllerBase
         return $this->service->changePassword(ChangePasswordDtoUsersDto::make(request()->all()), $this->auth, 'default');
     }
 
-    public function uploadAvatar()
+    public function uploadAvatar($id)
     {
-        return $this->service->upload(UploadAvatarDtoUsersDto::make(request()->all()), $this->auth, 'default');
+        return $this->service->uploadAvatar($id, UploadAvatarDtoUsersDto::make(request()->all()), $this->auth, 'default');
+    }
+
+    public function uploadAvatarMe()
+    {
+        return $this->service->uploadAvatar($this->auth->id, UploadAvatarDtoUsersDto::make(request()->all()), $this->auth, 'default');
     }
 
     public function delete($id)

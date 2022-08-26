@@ -69,6 +69,7 @@ class UsersService extends Service
     public function __construct(
         protected \App\Modules\Users\Transformers\UsersTransformer $transformer,
         protected \App\Modules\Users\Repositories\UsersRepository $repository,
+        protected \App\Modules\Uploads\Repositories\S3FilesRepository $s3FilesRepository,
         protected \App\Modules\Users\Policies\UsersPolicy $policy
     ) {
     }
@@ -289,17 +290,30 @@ class UsersService extends Service
      * @return bool[]
      * @throws \Devesharp\Exceptions\Exception
      */
-    public function upload(UploadAvatarDtoUsersDto $data, $user)
+    public function uploadAvatar($id, UploadAvatarDtoUsersDto $data, $requester)
     {
+        $model = $this->repository->findIdOrFail($id);
+
+        // Authorization
+        $this->policy->update($requester, $model);
+
         /** @var File $file */
         $file = $data->file;
-        $name = base64_encode($user->id . '-' . sha1($user->id));
+        $name = base64_encode($model->id . '-' . sha1($model->id));
         $filePath = 'avatar/' . $name . '.png';
 
         $response = app(UploadsAWSService::class)->uploadPublicFile($filePath, $file, $file->getMimeType());
 
-        $this->repository->clearQuery()->updateById($user->id, [
+        $this->repository->clearQuery()->updateById($model->id, [
             'image' => $response['key'],
+        ]);
+
+        $this->s3FilesRepository->clearQuery()->create([
+            'user_id' => $requester->id,
+            'path' => $response['key'],
+            'original_name' => $file->getClientOriginalName(),
+            'mime_type' => $file->getMimeType(),
+            'size' => $file->getSize(),
         ]);
 
         return $response;

@@ -32,12 +32,13 @@ Route::group(['middleware' => 'auth:api'], function () {
     // Users Routes
     Route::controller(\App\Modules\Users\Controllers\UsersController::class)->group(function () {
         Route::post('users/change-password', 'changePassword');
-        Route::post('users/upload-avatar', 'uploadAvatar');
         Route::post('users/search', 'search');
         Route::get('users/me', 'getSelf');
+        Route::post('users/me/upload-avatar', 'uploadAvatarMe');
         Route::post('users/me', 'updateSelf');
         Route::get('users/{id}', 'get');
         Route::post('users/{id}', 'update');
+        Route::post('users/{id}/upload-avatar', 'uploadAvatar');
         Route::post('users', 'create');
         Route::delete('users/{id}', 'delete');
     });
