@@ -1,6 +1,14 @@
 version: '3.7'
 
 services:
+    app:
+        build:
+            target: app
+            context: .
+        volumes:
+            - ./:/app
+#    newrelic:
+#        image: newrelic/php-daemon
     db:
         image: devesharp/mariadb:10.6.1
         ports:
