@@ -11,8 +11,8 @@ WORKDIR /app
 COPY . /app
 COPY ./public /app/html
 COPY --from=composer /usr/bin/composer /usr/local/bin/composer
-RUN composer install
-#RUN composer dump-autoload -o
+RUN composer install --no-dev --no-scripts
+RUN composer dump-autoload -o
 
 # ------------------------
 # Create App
