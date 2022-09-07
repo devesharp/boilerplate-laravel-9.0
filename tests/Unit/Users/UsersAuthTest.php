@@ -344,7 +344,7 @@ class UsersAuthTest extends TestCase
     Users::find($user->id)->update([
          'remember_token_at' => Carbon::now()
             ->subHour(23)
-            ->format('YmdHis'),
+            ->format('Y-m-d H:i:s'),
       ]);
 
     $remember_token = Users::find($user->id)->remember_token;
