@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "74d2249ef304924286033fb5f7163f84",
+    "content-hash": "d8bf3b462e3e8d14296b5eadb7931798",
     "packages": [
         {
             "name": "adbario/php-dot-notation",
@@ -395,11 +395,17 @@
         },
         {
             "name": "devesharp/pattern",
-            "version": "dev-master",
+            "version": "1.0.8",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/devesharp/php-pattern.git",
+                "reference": "c6925df31b71d41a73812c6908419bdee28e685e"
+            },
             "dist": {
-                "type": "path",
-                "url": "/Volumes/Ammar/albertoammar/workspace/devesharp/php/pattern",
-                "reference": "a8c429f4ac7c1514e6f3bb17d827e05ee1c835e1"
+                "type": "zip",
+                "url": "https://api.github.com/repos/devesharp/php-pattern/zipball/c6925df31b71d41a73812c6908419bdee28e685e",
+                "reference": "c6925df31b71d41a73812c6908419bdee28e685e",
+                "shasum": ""
             },
             "require": {
                 "adbario/php-dot-notation": "^3.1",
@@ -421,15 +427,12 @@
                     "Devesharp\\": "src/"
                 }
             },
-            "autoload-dev": {
-                "psr-4": {
-                    "Devesharp\\": "src/",
-                    "Tests\\": "tests/"
-                }
+            "notification-url": "https://packagist.org/downloads/",
+            "support": {
+                "issues": "https://github.com/devesharp/php-pattern/issues",
+                "source": "https://github.com/devesharp/php-pattern/tree/1.0.8"
             },
-            "transport-options": {
-                "relative": false
-            }
+            "time": "2022-09-07T13:10:46+00:00"
         },
         {
             "name": "dflydev/dot-access-data",
@@ -10142,9 +10145,7 @@
     ],
     "aliases": [],
     "minimum-stability": "dev",
-    "stability-flags": {
-        "devesharp/pattern": 20
-    },
+    "stability-flags": [],
     "prefer-stable": true,
     "prefer-lowest": false,
     "platform": {
