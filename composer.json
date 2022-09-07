@@ -6,7 +6,7 @@
     "license": "MIT",
     "require": {
         "php": "^8.1.0",
-        "devesharp/pattern": "^1.0.6",
+        "devesharp/pattern": "^1.0",
         "guzzlehttp/guzzle": "^7.2",
         "laravel/framework": "^9.19",
         "laravel/sanctum": "^3.0",
