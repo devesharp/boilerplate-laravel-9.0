@@ -185,7 +185,7 @@ return [
         /*
          * Package Service Providers...
          */
-        Devesharp\Console\MakeProvider::class,
+        Devesharp\Generators\Provider\GeneratorsProvider::class,
         Devesharp\APIDocs\Provider::class,
 
         /*
