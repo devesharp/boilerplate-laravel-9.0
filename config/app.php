@@ -187,6 +187,7 @@ return [
          */
         Devesharp\Generators\Provider\GeneratorsProvider::class,
         Devesharp\APIDocs\Provider::class,
+        Devesharp\Support\Validators\ValidatorProvider::class,
 
         /*
          * Application Service Providers...
