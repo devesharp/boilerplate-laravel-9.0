@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "74d2249ef304924286033fb5f7163f84",
+    "content-hash": "c339645276e7bab59804d58cc381a31c",
     "packages": [
         {
             "name": "adbario/php-dot-notation",
@@ -399,7 +399,7 @@
             "dist": {
                 "type": "path",
                 "url": "/Volumes/Ammar/albertoammar/workspace/devesharp/php/pattern",
-                "reference": "15b368beb8bab58d8de642e9502f5a0a2bbaa803"
+                "reference": "d09e4a3cee1be8cb6a1327935931320ae3362c53"
             },
             "require": {
                 "adbario/php-dot-notation": "^3.1",
