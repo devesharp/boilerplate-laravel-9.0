@@ -49,7 +49,7 @@ fields:
         rules: ""
         sort: true
         searchable: true
-        isDto: false
+        isDto: true
         inTransformer: true
         description: "When was this post published?"
     password:
