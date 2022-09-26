@@ -1,0 +1,55 @@
+name: Users
+module: Users
+components:
+    withController: true
+    withDto: true
+    withService: true
+    withFactory: true
+    withModel: true
+    withPolicy: true
+    withPresenter: true
+    withRepository: true
+    withRouteDocs: true
+    withTransformerInterface: true
+    withTransformer: true
+    withTestRoute: true
+    withTestUnit: true
+fields:
+    id:
+        dbType: "id"
+        rules: null
+        searchable: true
+        sort: true
+        primary: true
+        dto: false
+        transformer: true
+        description: "The ID of the post"
+    enabled:
+        dbType: "boolean"
+        default: true
+        dto: false
+        description: "Soft delete"
+    name:
+        dbType: "foreign"
+        relation: "mt1,Users,id"
+        sort: true
+        getByUser: true
+        searchable: true
+        dto: false
+        description: "The name of the platform"
+    created_at:
+        dbType: "timestamp"
+        sort: true
+        dto: false
+        rules: null
+        searchable: true
+        transformer: true
+        description: "When was this platform created?"
+    updated_at:
+        dbType: "timestamp"
+        sort: true
+        rules: null
+        dto: false
+        searchable: true
+        transformer: true
+        description: "When was this platform updated?"

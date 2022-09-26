@@ -1,0 +1,5 @@
+name: 'API Test'
+modules:
+  - source: 'platforms.yml'
+  - source: 'users.yml'
+  - source: 'posts.yml'

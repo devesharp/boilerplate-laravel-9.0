@@ -1,0 +1,123 @@
+name: Posts
+module: Posts
+components:
+    withController: true
+    withDto: true
+    withService: true
+    withFactory: true
+    withModel: true
+    withPolicy: true
+    withPresenter: true
+    withRepository: true
+    withRouteDocs: true
+    withTransformerInterface: true
+    withTransformer: true
+    withTestRoute: true
+    withTestUnit: true
+fields:
+    id:
+        dbType: "id"
+        rules: null
+        searchable: true
+        sort: true
+        primary: true
+        dto: false
+        transformer: true
+        description: "The ID of the post"
+    enabled:
+        dbType: "boolean"
+        default: true
+        dto: false
+        description: "Soft delete?"
+    platform_id:
+        dbType: "foreign"
+        relation: "mt1,Platforms,id"
+        getByUser: true
+        searchable: true
+        dto: false
+        description: "Platform ID"
+    user_id:
+        dbType: "foreign"
+        relation: "mt1,Users,id"
+        sort: true
+        getByUser: true
+        searchable: true
+        dto: false
+        nullable: true
+        description: "The user who created the post"
+    title:
+        dbType: "string"
+        rules: "required"
+        searchable: true
+        dto: true
+        transformer: true
+        description: "The title of the post"
+    body:
+        dbType: "text"
+        rules: "required"
+        searchable: true
+        dto: true
+        transformer: true
+        description: "The body of the post"
+    is_featured:
+        dbType: "boolean"
+        rules: ""
+        searchable: true
+        dto: true
+        transformer: true
+        description: "Is this post featured?"
+    published_at:
+        dbType: "date"
+        rules: ""
+        sort: true
+        searchable: true
+        dto: false
+        transformer: true
+        description: "When was this post published?"
+    password:
+        dbType: "string"
+        rules: ""
+        searchable: true
+        dto: true
+        transformer: true
+        description: "The password to view this post"
+    post_type:
+        dbType: "integer"
+        rules: ""
+        searchable: true
+        dto: true
+        transformer: true
+        description: "The type of post"
+    status:
+        dbType: "integer"
+        rules: ""
+        sort: true
+        searchable: true
+        dto: true
+        transformer: true
+        description: "The status of the post"
+    created_by:
+        dbType: "foreign"
+        relation: "mt1,Users,id"
+        rules: "required|min:1"
+        getByUser: true
+        searchable: true
+        dto: false
+        transformer: true
+        description: "The user that created this post"
+    created_at:
+        dbType: "timestamp"
+        sort: true
+        dto: false
+        rules: null
+        searchable: true
+        transformer: true
+        description: "When was this post created?"
+    updated_at:
+        dbType: "timestamp"
+        sort: true
+        rules: null
+        dto: false
+        searchable: true
+        transformer: true
+        description: "When was this post updated?"
