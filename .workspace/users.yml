@@ -5,7 +5,7 @@ layers:
     withDto: true
     withService: true
     withFactory: true
-    withMigrations: false
+    withMigration: false
     withModel: true
     withPolicy: true
     withPresenter: true
