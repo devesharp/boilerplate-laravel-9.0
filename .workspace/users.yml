@@ -1,6 +1,6 @@
 name: Users
 module: Users
-components:
+layers:
     withController: true
     withDto: true
     withService: true

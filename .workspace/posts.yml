@@ -1,6 +1,6 @@
 name: Posts
 module: Posts
-components:
+layers:
     withController: true
     withDto: true
     withService: true
