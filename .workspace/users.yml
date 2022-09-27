@@ -5,15 +5,16 @@ layers:
     withDto: true
     withService: true
     withFactory: true
+    withMigrations: false
     withModel: true
     withPolicy: true
     withPresenter: true
     withRepository: true
-    withRouteDocs: true
+    withRouteDocs: false
     withTransformerInterface: true
     withTransformer: true
-    withTestRoute: true
-    withTestUnit: true
+    withTestRoute: false
+    withTestUnit: false
 fields:
     id:
         dbType: "id"
