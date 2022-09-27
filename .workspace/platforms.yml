@@ -14,18 +14,9 @@ fields:
         default: true
         dto: false
         description: "Soft delete"
-    platform_id:
-        dbType: "foreign"
-        relation: "mt1,Platforms,id"
-        getByUser: true
-        searchable: true
-        dto: false
-        description: "Platform ID"
     name:
-        dbType: "foreign"
-        relation: "mt1,Users,id"
+        dbType: "string"
         sort: true
-        getByUser: true
         searchable: true
         dto: false
         description: "The name of the platform"
