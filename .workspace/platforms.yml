@@ -18,7 +18,7 @@ fields:
         dbType: "string"
         sort: true
         searchable: true
-        dto: false
+        dto: true
         description: "The name of the platform"
     created_at:
         dbType: "timestamp"
