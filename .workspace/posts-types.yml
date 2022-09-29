@@ -1,0 +1,63 @@
+module: Posts
+name: PostsTypes
+layers:
+  withController: true
+  withDto: true
+  withService: true
+  withFactory: true
+  withMigrations: true
+  withModel: true
+  withPolicy: true
+  withPresenter: true
+  withRepository: true
+  withRouteDocs: true
+  withTransformerInterface: true
+  withTransformer: true
+  withTestRoute: true
+  withTestUnit: true
+fields:
+  id:
+    dbType: "id"
+    rules: null
+    searchable: true
+    sort: true
+    primary: true
+    dto: false
+    transformer: true
+    description: "The ID of the post"
+  enabled:
+    dbType: "boolean"
+    default: true
+    dto: false
+    description: "Soft delete?"
+  platform_id:
+    dbType: "foreign"
+    relation: "mt1,Platforms,id"
+    valueOnCreate:
+      value: 1
+    searchable: true
+    dto: false
+    description: "Platform ID"
+  name:
+    dbType: "string"
+    rules: "required"
+    searchable: true
+    dto: true
+    transformer: true
+    description: "The name of type"
+  created_at:
+    dbType: "timestamp"
+    sort: true
+    dto: false
+    rules: null
+    searchable: true
+    transformer: true
+    description: "When was this post created?"
+  updated_at:
+    dbType: "timestamp"
+    sort: true
+    rules: null
+    dto: false
+    searchable: true
+    transformer: true
+    description: "When was this post updated?"

@@ -3,3 +3,4 @@ modules:
   - source: 'platforms.yml'
   - source: 'users.yml'
   - source: 'posts.yml'
+  - source: 'posts-types.yml'
