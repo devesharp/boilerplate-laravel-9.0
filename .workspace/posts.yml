@@ -49,6 +49,13 @@ fields:
     dto: false
     nullable: true
     description: "The user who created the post"
+  type_id:
+    dbType: "foreign"
+    relation: "mt1,PostsTypes,id"
+    sort: true
+    searchable: true
+    dto: true
+    description: "The type of the post"
   title:
     dbType: "string"
     rules: "required"
