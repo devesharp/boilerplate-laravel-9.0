@@ -32,7 +32,10 @@ fields:
     description: "Soft delete?"
   platform_id:
     dbType: "foreign"
-    relation: "mt1,Platforms,id"
+    relation:
+      type: "mt1"
+      resource: "Platforms"
+      key: "id"
     valueOnCreate:
       #          getByUserKey: 'platform_id'
       value: 1
@@ -41,7 +44,10 @@ fields:
     description: "Platform ID"
   user_id:
     dbType: "foreign"
-    relation: "mt1,Users,id"
+    relation:
+      type: "mt1"
+      resource: "Users"
+      key: "id"
     sort: true
     valueOnCreate:
       getByUserKey: 'id'
@@ -51,7 +57,10 @@ fields:
     description: "The user who created the post"
   type_id:
     dbType: "foreign"
-    relation: "mt1,PostsTypes,id"
+    relation:
+      type: "mt1"
+      resource: "PostsTypes"
+      key: "id"
     sort: true
     searchable: true
     dto: true
@@ -111,7 +120,10 @@ fields:
     description: "The status of the post"
   created_by:
     dbType: "foreign"
-    relation: "mt1,Users,id"
+    relation:
+      type: "mt1"
+      resource: "Users"
+      key: "id"
     rules: "required|min:1"
     valueOnCreate:
       getByUserKey: 'id'
