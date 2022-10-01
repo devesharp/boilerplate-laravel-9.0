@@ -31,8 +31,7 @@ fields:
         dto: false
         description: "Soft delete"
     name:
-        dbType: "foreign"
-        relation: "mt1,Users,id"
+        dbType: "string"
         sort: true
         getByUser: true
         searchable: true

@@ -32,7 +32,10 @@ fields:
     description: "Soft delete?"
   platform_id:
     dbType: "foreign"
-    relation: "mt1,Platforms,id"
+    relation:
+      type: "mt1"
+      resource: "Platforms"
+      key: "id"
     valueOnCreate:
       value: 1
     searchable: true
