@@ -2,8 +2,8 @@
 
 namespace App\Modules\Users\Docs;
 
-use Devesharp\APIDocs\RoutesDocAbstract;
-use Devesharp\APIDocs\RoutesDocInfo;
+use Devesharp\SwaggerGenerator\RoutesDocAbstract;
+use Devesharp\SwaggerGenerator\RoutesDocInfo;
 
 class UsersAuthRouteDoc extends RoutesDocAbstract
 {
