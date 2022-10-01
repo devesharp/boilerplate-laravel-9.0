@@ -37,7 +37,6 @@ fields:
       resource: "Platforms"
       key: "id"
     valueOnCreate:
-      #          getByUserKey: 'platform_id'
       value: 1
     searchable: true
     dto: false
@@ -60,6 +59,7 @@ fields:
     relation:
       type: "mt1"
       resource: "PostsTypes"
+      module: "Posts"
       key: "id"
     sort: true
     searchable: true
