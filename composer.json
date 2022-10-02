@@ -6,6 +6,7 @@
     "license": "MIT",
     "scripts": {
         "generate:api:docs": "./vendor/bin/generate-swagger --testsuite Routes",
+        "lint": "./vendor/bin/pint",
         "post-autoload-dump": [
             "Illuminate\\Foundation\\ComposerScripts::postAutoloadDump",
             "@php artisan package:discover --ansi"
