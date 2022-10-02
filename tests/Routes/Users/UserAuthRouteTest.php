@@ -107,7 +107,7 @@ class UserAuthRouteTest extends \Tests\TestCase
         $user = Users::factory()->create();
 
         $response = $this->withPost('/v1/auth/password-recover')
-            ->setRouteInfo('AuthCheck', UsersAuthRouteDoc::class)
+            ->setRouteInfo('PasswordReset', UsersAuthRouteDoc::class)
             ->addGroups(['auth'])
             ->addBody([
                 'login' => $user->login,

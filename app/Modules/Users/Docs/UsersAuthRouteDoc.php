@@ -11,7 +11,7 @@ class UsersAuthRouteDoc extends RoutesDocAbstract
         return match ($name) {
             'Login' => new RoutesDocInfo("Login", ""),
             'AuthCheck' => new RoutesDocInfo("Verificação de AccessToken", ""),
-            'PasswordReset' => new RoutesDocInfo("Esqueci a senha", ""),
+            'PasswordReset' => new RoutesDocInfo("Recuperar senha", ""),
             'VerifyRememberToken' => new RoutesDocInfo("Verificação de token de recuperação de senha", ""),
             'Logout' => new RoutesDocInfo("Logout", ""),
             default => new RoutesDocInfo("", ""),
