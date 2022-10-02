@@ -286,7 +286,6 @@ class UsersRouteTest extends TestCase
 
         $response = $this->withPost('/v1/users/me/upload-avatar')
             ->setRouteInfo('UploadAvatarMe', UsersRouteDoc::class)
-            ->addPath('id', $resource->id, 'Id do Usuário')
             ->addHeader('Authorization', 'Bearer ' . $user->access_token, 'Authorization')
             ->addGroups(['Usuários'])
             ->addBody([
