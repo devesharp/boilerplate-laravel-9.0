@@ -2,7 +2,8 @@
 
 namespace App\Modules\Users\Interfaces;
 
-enum UsersPermissions {
+enum UsersPermissions
+{
     case USERS_CREATE;
     case USERS_UPDATE;
     case USERS_VIEW;

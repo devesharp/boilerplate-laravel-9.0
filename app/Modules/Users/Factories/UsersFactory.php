@@ -3,7 +3,6 @@
 namespace App\Modules\Users\Factories;
 
 use App\Modules\Users\Models\Users;
-use Database\Factories\UserFactory;
 use Devesharp\Support\Factory;
 
 class UsersFactory extends Factory
@@ -30,9 +29,9 @@ class UsersFactory extends Factory
             'login' => fake()->userName,
             'CPF' => '400.898.988-00',
             'document' => '12.345.678-9',
-//            'email_verified_at' => now(),
+            //            'email_verified_at' => now(),
             'password' => '$2y$10$92IXUNpkjO0rOQ5byMi.Ye4oKoEa3Ro9llC/.og/at2.uheWG/igi', // password
-//            'remember_token' => \Str::random(10),
+            //            'remember_token' => \Str::random(10),
         ];
     }
 

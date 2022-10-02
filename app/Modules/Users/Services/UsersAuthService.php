@@ -2,23 +2,20 @@
 
 namespace App\Modules\Users\Services;
 
-use App\Core\Users\Models\UsersTokens;
-use App\Models\User;
-use App\Modules\Users\Dto\ResetPasswordUsersDto;
+use App\Exceptions\Exception;
 use App\Modules\Users\Dto\ForgetPasswordUsersDto;
 use App\Modules\Users\Dto\LoginUsersDto;
 use App\Modules\Users\Dto\LogoutUsersDto;
+use App\Modules\Users\Dto\ResetPasswordUsersDto;
 use App\Modules\Users\Dto\TokenVerifyUsersDto;
 use App\Modules\Users\Dto\VerifyRememberPasswordUsersDto;
 use App\Modules\Users\Models\Users;
 use Carbon\Carbon;
-use App\Exceptions\Exception;
 use Devesharp\Patterns\Repository\RepositoryMysql;
 use Devesharp\Patterns\Transformer\Transformer;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Str;
 use PHPOpenSourceSaver\JWTAuth\Facades\JWTAuth;
-use Symfony\Component\HttpKernel\EventListener\ValidateRequestListener;
 
 class UsersAuthService
 {
@@ -26,16 +23,17 @@ class UsersAuthService
         protected \App\Modules\Users\Transformers\UsersTransformer $transformer,
         protected \App\Modules\Users\Repositories\UsersRepository $repository,
         protected \App\Modules\Users\Repositories\UsersAccessTokensRepository $usersTokensRepository
-    ) {}
+    ) {
+    }
 
     /**
-     * @param LoginUsersDto $data
+     * @param  LoginUsersDto  $data
      * @return mixed
+     *
      * @throws \Devesharp\Exceptions\Exception
      */
     public function login(LoginUsersDto $data)
     {
-
         $dataEmail = [
             'email' => $data['login'],
             'password' => $data['password'],
@@ -105,16 +103,17 @@ class UsersAuthService
     }
 
     /**
-     * @param ForgetPasswordUsersDto $data
-     * @param null $token
+     * @param  ForgetPasswordUsersDto  $data
+     * @param  null  $token
      * @return array
+     *
      * @throws Exception
      */
     public function forgetPassword(ForgetPasswordUsersDto $data, $token = null)
     {
         $login = $data['login'];
 
-        $token = $token ?? base64_encode(uniqid(rand(), true) . "-" . date("YmdHis"));
+        $token = $token ?? base64_encode(uniqid(rand(), true).'-'.date('YmdHis'));
 
         if (empty($login)) {
             Exception::Exception(Exception::RECOVERY_PASSWORD_LOGIN_INVALID);
@@ -123,7 +122,7 @@ class UsersAuthService
         // Resgatar usuário
         $user = $this->repository
             ->andWhere(function (RepositoryMysql $query) use ($login) {
-                $query->orWhereLike("login", $login)->orWhereLike("email", $login);
+                $query->orWhereLike('login', $login)->orWhereLike('email', $login);
             })
             ->findOne();
 
@@ -133,20 +132,21 @@ class UsersAuthService
 
         // Adicionar token
         $this->repository->updateById($user->id, [
-            "remember_token" => $token,
-            "remember_token_at" => Carbon::now(),
+            'remember_token' => $token,
+            'remember_token_at' => Carbon::now(),
         ]);
 
         // Enviar email
 
         return [
-            "email" => $user->email,
+            'email' => $user->email,
         ];
     }
 
     /**
-     * @param VerifyRememberPasswordUsersDto $data
+     * @param  VerifyRememberPasswordUsersDto  $data
      * @return array
+     *
      * @throws \Devesharp\Exceptions\Exception
      */
     public function verifyRememberPassword(VerifyRememberPasswordUsersDto $data)
@@ -193,15 +193,16 @@ class UsersAuthService
     /**
      * Mudar Senha da conta pelo token de esqueci a Senha.
      *
-     * @param ResetPasswordUsersDto $data
+     * @param  ResetPasswordUsersDto  $data
      * @return bool[]
+     *
      * @throws Exception
      */
     public function changePasswordByToken(ResetPasswordUsersDto $data)
     {
         $user = $this->repository
             ->clearQuery()
-            ->whereSameString("remember_token", $data["remember_token"])
+            ->whereSameString('remember_token', $data['remember_token'])
             ->findOne();
 
         // Token não existe
@@ -210,11 +211,11 @@ class UsersAuthService
         }
 
         $user->remember_token = null;
-        $user->password = Hash::make($data["new_password"]);
+        $user->password = Hash::make($data['new_password']);
         $user->update();
 
         return [
-            'changed' => true
+            'changed' => true,
         ];
     }
 
@@ -230,7 +231,7 @@ class UsersAuthService
         auth()->logout();
 
         return [
-            "logout" => true,
+            'logout' => true,
         ];
     }
 
@@ -240,15 +241,16 @@ class UsersAuthService
     public function refresh()
     {
         return [
-            "access_token" => auth()->refresh(),
+            'access_token' => auth()->refresh(),
         ];
     }
 
     /**
-     * @param Users $user
+     * @param  Users  $user
      */
-    function createTokenForUser(Users $user): string {
-        $token = hash('sha256', Str::random(40)) . '|' . Carbon::now()->getTimestamp();
+    public function createTokenForUser(Users $user): string
+    {
+        $token = hash('sha256', Str::random(40)).'|'.Carbon::now()->getTimestamp();
 
         $exist = $this->usersTokensRepository
             ->clearQuery()

@@ -14,9 +14,9 @@ class UploadsAWSService
             'region' => config('filesystems.disks.'.$disk.'.region'),
             'version' => 'latest',
             'credentials' => [
-                'key'    => config('filesystems.disks.'.$disk.'.key'),
+                'key' => config('filesystems.disks.'.$disk.'.key'),
                 'secret' => config('filesystems.disks.'.$disk.'.secret'),
-            ]
+            ],
         ]);
     }
 
@@ -24,13 +24,13 @@ class UploadsAWSService
     {
         $uploaded = Storage::disk('s3')->put($key, file_get_contents($filename));
 
-        if (!$uploaded) {
+        if (! $uploaded) {
             throw new \Exception('Erro ao fazer upload do arquivo');
         }
 
         return [
             'key' => $key,
-            'url' => config('filesystems.disks.'.$this->disk.'.url') . $key,
+            'url' => config('filesystems.disks.'.$this->disk.'.url').$key,
         ];
     }
 }

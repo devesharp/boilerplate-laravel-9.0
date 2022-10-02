@@ -3,7 +3,6 @@
 namespace App\Modules\Users\Dto;
 
 use Devesharp\Patterns\Dto\AbstractDto;
-use Devesharp\Patterns\Dto\Templates\SearchTemplateDto;
 
 class UpdateUsersDto extends AbstractDto
 {

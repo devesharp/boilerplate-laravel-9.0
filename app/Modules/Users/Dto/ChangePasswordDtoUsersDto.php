@@ -10,8 +10,8 @@ class ChangePasswordDtoUsersDto extends AbstractDto
     protected function configureValidatorRules(): array
     {
         return [
-            "old_password" => new Rule("string|required", "Senha antiga"),
-            "new_password" => new Rule("string|required", "Nova senha"),
+            'old_password' => new Rule('string|required', 'Senha antiga'),
+            'new_password' => new Rule('string|required', 'Nova senha'),
         ];
     }
 }

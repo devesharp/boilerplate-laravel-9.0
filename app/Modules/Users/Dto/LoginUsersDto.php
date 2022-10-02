@@ -10,8 +10,8 @@ class LoginUsersDto extends AbstractDto
     protected function configureValidatorRules(): array
     {
         return [
-            "login" => new Rule("string|required", "Login ou email do usuário"),
-            "password" => new Rule("string|required", "Senha do usuário"),
+            'login' => new Rule('string|required', 'Login ou email do usuário'),
+            'password' => new Rule('string|required', 'Senha do usuário'),
         ];
     }
 }

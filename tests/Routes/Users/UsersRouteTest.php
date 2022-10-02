@@ -3,20 +3,18 @@
 namespace Tests\Routes\Users;
 
 use App\Modules\Uploads\Services\UploadsAWSService;
-use \App\Modules\Users\Docs\UsersRouteDoc;
+use App\Modules\Users\Docs\UsersRouteDoc;
 use App\Modules\Users\Dto\ChangePasswordDtoUsersDto;
 use App\Modules\Users\Dto\CreateUsersDto;
-use App\Modules\Users\Dto\LoginUsersDto;
 use App\Modules\Users\Dto\SearchUsersDto;
 use App\Modules\Users\Dto\UpdateUsersDto;
 use App\Modules\Users\Interfaces\UsersPermissions;
 use App\Modules\Users\Models\Users;
 use Illuminate\Http\UploadedFile;
 use Illuminate\Support\Facades\Hash;
-use Mockery\Mock;
 use Mockery\MockInterface;
-use Tests\TestCase;
 use PHPOpenSourceSaver\JWTAuth\Facades\JWTAuth;
+use Tests\TestCase;
 
 class UsersRouteTest extends TestCase
 {
@@ -33,7 +31,7 @@ class UsersRouteTest extends TestCase
 
         $response = $this->withPost('/v1/users')
             ->setRouteInfo('CreateUsers', UsersRouteDoc::class)
-            ->addHeader('Authorization', 'Bearer ' . $user->access_token, 'Authorization')
+            ->addHeader('Authorization', 'Bearer '.$user->access_token, 'Authorization')
             ->addGroups(['Usuários'])
             ->addBody($UsersData, CreateUsersDto::class)
             ->run();
@@ -60,7 +58,7 @@ class UsersRouteTest extends TestCase
         $response = $this->withPost('/v1/users/:id')
             ->addPath('id', $resource->id, 'Id do Usuário')
             ->setRouteInfo('UpdateUsers', UsersRouteDoc::class)
-            ->addHeader('Authorization', 'Bearer ' . $user->access_token, 'Authorization')
+            ->addHeader('Authorization', 'Bearer '.$user->access_token, 'Authorization')
             ->addGroups(['Usuários'])
             ->addBody($UsersData, UpdateUsersDto::class)
             ->run();
@@ -87,7 +85,7 @@ class UsersRouteTest extends TestCase
             ->setRouteInfo('GetUsers', UsersRouteDoc::class)
             ->addPath('id', $resource->id, 'Id do Usuário')
             ->setRouteInfo('GetUsers', UsersRouteDoc::class)
-            ->addHeader('Authorization', 'Bearer ' . $user->access_token, 'Authorization')
+            ->addHeader('Authorization', 'Bearer '.$user->access_token, 'Authorization')
             ->addGroups(['Usuários'])
             ->run();
 
@@ -112,7 +110,7 @@ class UsersRouteTest extends TestCase
 
         $response = $this->withPost('/v1/users/me')
             ->setRouteInfo('UpdateUsersMe', UsersRouteDoc::class)
-            ->addHeader('Authorization', 'Bearer ' . $user->access_token, 'Authorization')
+            ->addHeader('Authorization', 'Bearer '.$user->access_token, 'Authorization')
             ->addGroups(['Usuários'])
             ->addBody($UsersData, UpdateUsersDto::class)
             ->run();
@@ -135,7 +133,7 @@ class UsersRouteTest extends TestCase
 
         $response = $this->withGet('/v1/users/me')
             ->setRouteInfo('GetUsersMe', UsersRouteDoc::class)
-            ->addHeader('Authorization', 'Bearer ' . $user->access_token, 'Authorization')
+            ->addHeader('Authorization', 'Bearer '.$user->access_token, 'Authorization')
             ->addGroups(['Usuários'])
             ->run();
 
@@ -159,11 +157,11 @@ class UsersRouteTest extends TestCase
 
         $response = $this->withPost('/v1/users/search')
             ->setRouteInfo('SearchUsers', UsersRouteDoc::class)
-            ->addHeader('Authorization', 'Bearer ' . $user->access_token, 'Authorization')
+            ->addHeader('Authorization', 'Bearer '.$user->access_token, 'Authorization')
             ->addGroups(['Usuários'])
             ->addBody([
                 'filters' => [
-                ]
+                ],
             ], SearchUsersDto::class)
             ->run();
 
@@ -188,7 +186,7 @@ class UsersRouteTest extends TestCase
         $response = $this->withDelete('/v1/users/:id')
             ->addPath('id', $resource->id, 'Id do Usuário')
             ->setRouteInfo('GetUsers', UsersRouteDoc::class)
-            ->addHeader('Authorization', 'Bearer ' . $user->access_token, 'Authorization')
+            ->addHeader('Authorization', 'Bearer '.$user->access_token, 'Authorization')
             ->addGroups(['Usuários'])
             ->run();
 
@@ -196,7 +194,7 @@ class UsersRouteTest extends TestCase
 
         $response->assertStatus(200);
         $this->assertTrue($responseData['success']);
-        $this->assertTrue(!!$responseData['data']);
+        $this->assertTrue((bool) $responseData['data']);
     }
 
     /**
@@ -213,7 +211,7 @@ class UsersRouteTest extends TestCase
 
         $response = $this->withPost('/v1/users/change-password')
             ->setRouteInfo('ChangePasswordUsers', UsersRouteDoc::class)
-            ->addHeader('Authorization', 'Bearer ' . $user->access_token, 'Authorization')
+            ->addHeader('Authorization', 'Bearer '.$user->access_token, 'Authorization')
             ->addGroups(['Usuários'])
             ->addBody([
                 'old_password' => '123456aa',
@@ -241,8 +239,8 @@ class UsersRouteTest extends TestCase
 
         $this->mock(UploadsAWSService::class, function (MockInterface $mock) {
             $mock->shouldReceive('uploadPublicFile')->once()->andReturn([
-                "key" => "avatar/image.png",
-                "url" => "https://example.s3.us-east-2.amazonaws.com/avatar/image.png"
+                'key' => 'avatar/image.png',
+                'url' => 'https://example.s3.us-east-2.amazonaws.com/avatar/image.png',
             ]);
         });
 
@@ -251,18 +249,18 @@ class UsersRouteTest extends TestCase
         $response = $this->withPost('/v1/users/:id/upload-avatar')
             ->setRouteInfo('UploadAvatar', UsersRouteDoc::class)
             ->addPath('id', $resource->id, 'Id do Usuário')
-            ->addHeader('Authorization', 'Bearer ' . $user->access_token, 'Authorization')
+            ->addHeader('Authorization', 'Bearer '.$user->access_token, 'Authorization')
             ->addGroups(['Usuários'])
             ->addBody([
-                'file' => UploadedFile::fake()->image('avatar.jpg')
+                'file' => UploadedFile::fake()->image('avatar.jpg'),
             ])
             ->run();
 
         $body = json_decode((string) $response->getContent(), true);
 
         $this->assertTrue($body['success']);
-        $this->assertEquals("avatar/image.png", $body['data']['key']);
-        $this->assertEquals("https://example.s3.us-east-2.amazonaws.com/avatar/image.png", $body['data']['url']);
+        $this->assertEquals('avatar/image.png', $body['data']['key']);
+        $this->assertEquals('https://example.s3.us-east-2.amazonaws.com/avatar/image.png', $body['data']['url']);
     }
 
     /**
@@ -277,8 +275,8 @@ class UsersRouteTest extends TestCase
 
         $this->mock(UploadsAWSService::class, function (MockInterface $mock) {
             $mock->shouldReceive('uploadPublicFile')->once()->andReturn([
-                "key" => "avatar/image.png",
-                "url" => "https://example.s3.us-east-2.amazonaws.com/avatar/image.png"
+                'key' => 'avatar/image.png',
+                'url' => 'https://example.s3.us-east-2.amazonaws.com/avatar/image.png',
             ]);
         });
 
@@ -286,17 +284,17 @@ class UsersRouteTest extends TestCase
 
         $response = $this->withPost('/v1/users/me/upload-avatar')
             ->setRouteInfo('UploadAvatarMe', UsersRouteDoc::class)
-            ->addHeader('Authorization', 'Bearer ' . $user->access_token, 'Authorization')
+            ->addHeader('Authorization', 'Bearer '.$user->access_token, 'Authorization')
             ->addGroups(['Usuários'])
             ->addBody([
-                'file' => UploadedFile::fake()->image('avatar.jpg')
+                'file' => UploadedFile::fake()->image('avatar.jpg'),
             ])
             ->run();
 
         $body = json_decode((string) $response->getContent(), true);
 
         $this->assertTrue($body['success']);
-        $this->assertEquals("avatar/image.png", $body['data']['key']);
-        $this->assertEquals("https://example.s3.us-east-2.amazonaws.com/avatar/image.png", $body['data']['url']);
+        $this->assertEquals('avatar/image.png', $body['data']['key']);
+        $this->assertEquals('https://example.s3.us-east-2.amazonaws.com/avatar/image.png', $body['data']['url']);
     }
 }

@@ -10,7 +10,6 @@ use App\Modules\Users\Dto\VerifyRememberPasswordUsersDto;
 use App\Modules\Users\Services\UsersAuthService;
 use App\Modules\Users\Services\UsersService;
 use Devesharp\Patterns\Controller\ControllerBase;
-use function Symfony\Component\String\b;
 
 class UsersAuthController extends ControllerBase
 {

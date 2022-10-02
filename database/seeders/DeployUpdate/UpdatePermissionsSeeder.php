@@ -3,7 +3,6 @@
 namespace Database\Seeders\DeployUpdate;
 
 use App\Modules\Users\Interfaces\UsersPermissions;
-use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 use Illuminate\Database\Seeder;
 use Silber\Bouncer\Bouncer;
 
@@ -19,7 +18,7 @@ class UpdatePermissionsSeeder extends Seeder
         foreach (UsersPermissions::cases() as $case) {
             $ban = Bouncer::ability()->firstOrCreate([
                 'name' => $case->name,
-                'title' => __('permissions.' . $case->name),
+                'title' => __('permissions.'.$case->name),
             ]);
         }
     }

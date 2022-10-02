@@ -9,10 +9,8 @@ use App\Modules\Users\Services\UsersAuthService;
 use Devesharp\Patterns\Presenter\PresentableTrait;
 use Devesharp\Support\ModelGetTable;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
-use phpDocumentor\Reflection\Types\This;
-use PHPOpenSourceSaver\JWTAuth\Contracts\JWTSubject;
 use Illuminate\Foundation\Auth\User as Authenticatable;
-use Silber\Bouncer\Conductors\GivesAbilities;
+use PHPOpenSourceSaver\JWTAuth\Contracts\JWTSubject;
 use Silber\Bouncer\Database\HasRolesAndAbilities;
 
 class Users extends Authenticatable implements JWTSubject
@@ -33,7 +31,7 @@ class Users extends Authenticatable implements JWTSubject
     ];
 
     protected $casts = [
-        'enabled' => 'bool'
+        'enabled' => 'bool',
     ];
 
     protected static function newFactory()
@@ -53,6 +51,7 @@ class Users extends Authenticatable implements JWTSubject
         if ($abilities instanceof UsersPermissions) {
             return parent::can($abilities->name, $arguments);
         }
+
         return parent::can($abilities, $arguments);
     }
 
@@ -97,7 +96,7 @@ class Users extends Authenticatable implements JWTSubject
     public function getJWTCustomClaims()
     {
         return [
-            't' => app(UsersAuthService::class)->createTokenForUser($this)
+            't' => app(UsersAuthService::class)->createTokenForUser($this),
         ];
     }
 

@@ -2,7 +2,8 @@
 
 namespace App\Modules\Users\Interfaces;
 
-enum UsersRoles: string {
+enum UsersRoles: string
+{
     case SIMPLE = 'simple';
     case ADMIN = 'admin';
 }

@@ -9,18 +9,14 @@ use App\Modules\Users\Dto\SearchUsersDto;
 use App\Modules\Users\Dto\UpdateUsersDto;
 use App\Modules\Users\Dto\UploadAvatarDtoUsersDto;
 use App\Modules\Users\Interfaces\UsersPermissions;
-use Illuminate\Foundation\Testing\RefreshDatabase;
+use App\Modules\Users\Models\Users;
+use App\Modules\Users\Services\UsersService;
 use Illuminate\Http\Testing\File;
-use Illuminate\Support\Facades\Hash;
 use Mockery\MockInterface;
-use Silber\Bouncer\Bouncer;
 use Tests\TestCase;
-use \App\Modules\Users\Models\Users;
-use \App\Modules\Users\Services\UsersService;
 
 class UsersTest extends TestCase
 {
-
     public UsersService $service;
 
     protected function setUp(): void
@@ -94,12 +90,11 @@ class UsersTest extends TestCase
         $userAdmin->allow([UsersPermissions::USERS_CREATE, UsersPermissions::USERS_SEARCH]);
 
         $results = $this->service->search(SearchUsersDto::make([
-            "filters" => [
-                "id" => 1
-            ]
+            'filters' => [
+                'id' => 1,
+            ],
         ]), $userAdmin);
         $this->assertEquals(1, $results['count']);
-
     }
 
     /**
@@ -120,7 +115,7 @@ class UsersTest extends TestCase
 //        $this->assertNull(Users::query()->find($resource['id']));
 
         // If softDelete = true
-        $this->assertFalse(!!Users::query()->find($resource['id'])->enabled);
+        $this->assertFalse((bool) Users::query()->find($resource['id'])->enabled);
     }
 
     /**
@@ -130,8 +125,8 @@ class UsersTest extends TestCase
     {
         $this->mock(UploadsAWSService::class, function (MockInterface $mock) {
             $mock->shouldReceive('uploadPublicFile')->once()->andReturn([
-                "key" => "avatar/image.png",
-                "url" => "https://example.s3.us-east-2.amazonaws.com/avatar/image.png"
+                'key' => 'avatar/image.png',
+                'url' => 'https://example.s3.us-east-2.amazonaws.com/avatar/image.png',
             ]);
         });
         $this->service = app(UsersService::class);
@@ -145,13 +140,13 @@ class UsersTest extends TestCase
             'file' => File::fake()->image('avatar.png'),
         ]), $userAdmin);
 
-        $this->assertEquals("avatar/image.png", $response['key']);
-        $this->assertEquals("https://example.s3.us-east-2.amazonaws.com/avatar/image.png", $response['url']);
+        $this->assertEquals('avatar/image.png', $response['key']);
+        $this->assertEquals('https://example.s3.us-east-2.amazonaws.com/avatar/image.png', $response['url']);
         $this->assertDatabaseHas(S3Files::getTableName(), [
             'target' => 's3',
             'user_id' => $userAdmin->id,
-            'path' => "avatar/image.png",
-            'original_name' => "avatar.png",
+            'path' => 'avatar/image.png',
+            'original_name' => 'avatar.png',
             'size' => 91,
         ]);
     }

@@ -19,7 +19,7 @@ class UsersAccessTokensRepository extends RepositoryMysql
      */
     protected $model = \App\Modules\Users\Models\UsersAccessTokens::class;
 
-    function deleteByToken($token)
+    public function deleteByToken($token)
     {
         return $this->clearQuery()->whereSameString('token', $token)->update(['enabled' => false, 'logout_at' => Carbon::now()]);
     }

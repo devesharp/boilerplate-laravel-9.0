@@ -2,7 +2,6 @@
 
 namespace App\Modules\Users\Services;
 
-use App\Core\Users\Models\Users;
 use App\Exceptions\Exception;
 use App\Modules\Uploads\Services\UploadsAWSService;
 use App\Modules\Users\Dto\ChangePasswordDtoUsersDto;
@@ -17,11 +16,9 @@ use Devesharp\Support\Collection;
 use Illuminate\Http\File;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Hash;
-use Illuminate\Support\Facades\Storage;
 
 class UsersService extends Service
 {
-
     /**
      * Sorts permitidas.
      */
@@ -77,15 +74,15 @@ class UsersService extends Service
     /**
      * Create resource
      *
-     * @param CreateUsersDto $data
-     * @param null $requester
+     * @param  CreateUsersDto  $data
+     * @param  null  $requester
      * @return mixed
+     *
      * @throws \Exception
      */
     public function create(CreateUsersDto $data, $requester = null, $context = 'model')
     {
         try {
-
             // Authorization
             $this->policy->create($requester);
 
@@ -108,10 +105,11 @@ class UsersService extends Service
     }
 
     /**
-     * @param int $id
-     * @param UpdateUsersDto $originalData
-     * @param null $requester
+     * @param  int  $id
+     * @param  UpdateUsersDto  $originalData
+     * @param  null  $requester
      * @return mixed
+     *
      * @throws \Exception
      */
     public function update(
@@ -146,20 +144,16 @@ class UsersService extends Service
 
     /**
      * @param $requester
-     * @param Collection $requestData
+     * @param  Collection  $requestData
      * @param $currentModel
-     * @param string $method
+     * @param  string  $method
      * @return Collection
      */
-    public function treatment(
-        $requester,
-        Collection $requestData,
-        $currentModel,
-        string $method
-    ) {
+    public function treatment($requester, Collection $requestData, $currentModel, string $method)
+    {
         if ($method == 'update') {
             return $requestData;
-        } else if ($method == 'create') {
+        } elseif ($method == 'create') {
             return $requestData;
         }
 
@@ -167,10 +161,11 @@ class UsersService extends Service
     }
 
     /**
-     * @param int $id
+     * @param  int  $id
      * @param $receiver
-     * @param string $context
+     * @param  string  $context
      * @return mixed
+     *
      * @throws \Devesharp\Exceptions\Exception
      */
     public function get(int $id, $receiver, string $context = 'default')
@@ -184,8 +179,9 @@ class UsersService extends Service
             \Devesharp\Exceptions\Exception::NotFound(\App\Modules\Users\Models\Users::class);
         }
 
-        if ($context != 'model')
+        if ($context != 'model') {
             $this->policy->get($receiver, $model);
+        }
 
         return Transformer::item(
             $model,
@@ -196,8 +192,8 @@ class UsersService extends Service
     }
 
     /**
-     * @param SearchUsersDto $originalData
-     * @param null $requester
+     * @param  SearchUsersDto  $originalData
+     * @param  null  $requester
      * @return array
      */
     public function search(SearchUsersDto $data, $requester = null)
@@ -218,7 +214,7 @@ class UsersService extends Service
 
     /**
      * @param $data
-     * @param null $requester
+     * @param  null  $requester
      * @return \Devesharp\Pattners\Repository\RepositoryInterface|\App\Modules\Users\Repositories\UsersRepository
      */
     protected function makeSearch(&$data, $requester = null)
@@ -232,7 +228,8 @@ class UsersService extends Service
     /**
      * @param $id
      * @param $requester
-     * @return bool
+     * @return array
+     *
      * @throws \Devesharp\Exceptions\Exception
      */
     public function delete($id, $requester = null)
@@ -263,7 +260,7 @@ class UsersService extends Service
     /**
      * Trocar senha
      *
-     * @param ChangePasswordDtoUsersDto $originalData
+     * @param  ChangePasswordDtoUsersDto  $originalData
      * @param $user
      * @return bool[]
      */
@@ -285,9 +282,10 @@ class UsersService extends Service
     /**
      * Atualizar avatar do usuário
      *
-     * @param UploadAvatarDtoUsersDto $data
+     * @param  UploadAvatarDtoUsersDto  $data
      * @param $user
      * @return bool[]
+     *
      * @throws \Devesharp\Exceptions\Exception
      */
     public function uploadAvatar($id, UploadAvatarDtoUsersDto $data, $requester)
@@ -299,8 +297,8 @@ class UsersService extends Service
 
         /** @var File $file */
         $file = $data->file;
-        $name = base64_encode($model->id . '-' . sha1($model->id));
-        $filePath = 'avatar/' . $name . '.png';
+        $name = base64_encode($model->id.'-'.sha1($model->id));
+        $filePath = 'avatar/'.$name.'.png';
 
         $response = app(UploadsAWSService::class)->uploadPublicFile($filePath, $file, $file->getMimeType());
 

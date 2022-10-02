@@ -2,11 +2,11 @@
 
 namespace App\Modules\Users\Transformers;
 
+use App\Modules\Users\Models\Users;
 use App\Supports\Formatters\CPFFormatter;
 use App\Supports\Formatters\DateTimeBrFormatter;
 use App\Supports\Formatters\RGFormatter;
 use Devesharp\Patterns\Transformer\Transformer;
-use \App\Modules\Users\Models\Users;
 
 class UsersTransformer extends Transformer
 {
@@ -16,9 +16,10 @@ class UsersTransformer extends Transformer
 
     /**
      * @param $model
-     * @param string $context
-     * @param null $requester
+     * @param  string  $context
+     * @param  null  $requester
      * @return mixed
+     *
      * @throws \Exception
      */
     public function transformDefault(
@@ -42,7 +43,7 @@ class UsersTransformer extends Transformer
         $transform['updated_at'] = format(DateTimeBrFormatter::class, $model->updated_at);
         $transform['created_at'] = format(DateTimeBrFormatter::class, $model->created_at);
 
-        if (!empty($model->access_token)) {
+        if (! empty($model->access_token)) {
             $transform['access_token'] = $model->access_token;
         }
 

@@ -23,17 +23,16 @@ class HandleResponse
         if ($request->is('v1/*')) {
             if ($newRequest instanceof \Illuminate\Http\Response) {
                 return response()->json([
-                    "success" => true,
-                    "data" => $newRequest->getContent(),
+                    'success' => true,
+                    'data' => $newRequest->getContent(),
                 ]);
             } elseif ($newRequest instanceof \Illuminate\Http\JsonResponse) {
                 $newRequest->setData([
-                    "success" => ! isset($newRequest->getData()->error),
-                    "data" => $newRequest->getData(),
+                    'success' => ! isset($newRequest->getData()->error),
+                    'data' => $newRequest->getData(),
                 ]);
             }
         }
-
 
         return $newRequest;
     }

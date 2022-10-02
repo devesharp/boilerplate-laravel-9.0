@@ -51,23 +51,24 @@ class Handler extends ExceptionHandler
 
     protected function unauthenticated($request, AuthenticationException $exception)
     {
-        return response()->json(["error" => "Unauthenticated."], 401);
+        return response()->json(['error' => 'Unauthenticated.'], 401);
     }
 
     public function render($request, Throwable $e)
     {
         return response()->json(
             [
-                "error" => $e->getMessage(),
-                "code" => $this->getCode($e),
-                "status_code" => $this->getExceptionHTTPStatusCode($e),
+                'error' => $e->getMessage(),
+                'code' => $this->getCode($e),
+                'status_code' => $this->getExceptionHTTPStatusCode($e),
                 'line' => app()->environment('prod') || app()->environment('testing') ? null : $e->getTrace(),
             ],
             $this->getExceptionHTTPStatusCode($e),
         );
     }
 
-    function getCode(Throwable $e) {
+    public function getCode(Throwable $e)
+    {
         if ($e instanceof AuthenticationException) {
             return \Devesharp\Exceptions\Exception::TOKEN_INVALID;
         }
@@ -82,16 +83,16 @@ class Handler extends ExceptionHandler
         }
 
         if ($e instanceof \Devesharp\Exceptions\Exception) {
-            if($e->getCode() === \Devesharp\Exceptions\Exception::TOKEN_INVALID){
+            if ($e->getCode() === \Devesharp\Exceptions\Exception::TOKEN_INVALID) {
                 return 401;
             }
 
-            if($e->getCode() === \Devesharp\Exceptions\Exception::NOT_FOUND_RESOURCE){
+            if ($e->getCode() === \Devesharp\Exceptions\Exception::NOT_FOUND_RESOURCE) {
                 return 404;
             }
         }
 
-        return method_exists($e, "getStatusCode") ? $e->getStatusCode() : 500;
+        return method_exists($e, 'getStatusCode') ? $e->getStatusCode() : 500;
     }
 
     public function report(Throwable $exception)
@@ -99,9 +100,9 @@ class Handler extends ExceptionHandler
         /**
          * Enviar erro para sentry
          */
-        if (!empty(env("SENTRY_LARAVEL_DSN")) && app()->environment(['prod']) ) {
-            if ($this->shouldReport($exception) && app()->bound("sentry")) {
-                app("sentry")->captureException($exception);
+        if (! empty(env('SENTRY_LARAVEL_DSN')) && app()->environment(['prod'])) {
+            if ($this->shouldReport($exception) && app()->bound('sentry')) {
+                app('sentry')->captureException($exception);
             }
         }
 

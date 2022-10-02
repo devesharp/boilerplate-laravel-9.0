@@ -2,7 +2,6 @@
 
 namespace Tests;
 
-use Database\Seeders\DatabaseSeeder;
 use Database\Seeders\DatabaseSeederTest;
 use Illuminate\Foundation\Testing\DatabaseMigrations;
 use Illuminate\Foundation\Testing\TestCase as BaseTestCase;

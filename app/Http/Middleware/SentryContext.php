@@ -17,7 +17,7 @@ class SentryContext
      */
     public function handle(Request $request, Closure $next)
     {
-        if (auth()->check() && app()->bound('sentry') && !empty(env("SENTRY_LARAVEL_DSN"))) {
+        if (auth()->check() && app()->bound('sentry') && ! empty(env('SENTRY_LARAVEL_DSN'))) {
             \Sentry\configureScope(function (Scope $scope): void {
                 $scope->setUser([
                     'id' => auth()->user()->id,

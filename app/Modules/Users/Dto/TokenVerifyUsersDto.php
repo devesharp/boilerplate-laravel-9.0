@@ -10,7 +10,7 @@ class TokenVerifyUsersDto extends AbstractDto
     protected function configureValidatorRules(): array
     {
         return [
-            "access_token" => new Rule("string", "Acess token")
+            'access_token' => new Rule('string', 'Acess token'),
         ];
     }
 }

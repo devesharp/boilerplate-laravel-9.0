@@ -9,7 +9,6 @@ use MichaelRubel\Formatters\Formatter;
 
 class DateTimeBrFormatter implements Formatter
 {
-
     public function __construct(
         public string|null|CarbonInterface $date = null
     ) {
@@ -22,7 +21,6 @@ class DateTimeBrFormatter implements Formatter
      * Format the date.
      *
      * @param  Collection  $items
-     *
      * @return string
      */
     public function format(Collection $items): string

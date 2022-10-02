@@ -10,7 +10,7 @@ class UploadAvatarDtoUsersDto extends AbstractDto
     protected function configureValidatorRules(): array
     {
         return [
-            "file" => new Rule("file", "Arquivo"),
+            'file' => new Rule('file', 'Arquivo'),
         ];
     }
 }

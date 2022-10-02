@@ -3,17 +3,15 @@
 namespace Tests\Routes\Users;
 
 use App\Modules\Users\Docs\UsersAuthRouteDoc;
-use App\Modules\Users\Dto\LogoutUsersDto;
-use App\Modules\Users\Dto\ResetPasswordUsersDto;
 use App\Modules\Users\Dto\ForgetPasswordUsersDto;
 use App\Modules\Users\Dto\LoginUsersDto;
-use App\Modules\Users\Dto\TokenVerifyUsersDto;
+use App\Modules\Users\Dto\LogoutUsersDto;
+use App\Modules\Users\Dto\ResetPasswordUsersDto;
 use App\Modules\Users\Dto\VerifyRememberPasswordUsersDto;
 use App\Modules\Users\Models\Users;
 use Carbon\Carbon;
 use Illuminate\Support\Facades\Hash;
 use PHPOpenSourceSaver\JWTAuth\Facades\JWTAuth;
-use Tests\Units\TestDocsRoute\Mocks\ValidatorStubWithGenerator;
 
 class UserAuthRouteTest extends \Tests\TestCase
 {
@@ -90,7 +88,7 @@ class UserAuthRouteTest extends \Tests\TestCase
         $response = $this->withPost('/v1/auth/check')
             ->setRouteInfo('AuthCheck', UsersAuthRouteDoc::class)
             ->addGroups(['auth'])
-            ->addHeader('Authorization', 'Bearer ' . $user->access_token, 'Authorization')
+            ->addHeader('Authorization', 'Bearer '.$user->access_token, 'Authorization')
             ->run();
 
         $data = json_decode((string) $response->getContent(), true)['data'];
@@ -182,7 +180,7 @@ class UserAuthRouteTest extends \Tests\TestCase
         $user->access_token = JWTAuth::fromUser($user);
 
         $response = $this->withPost('/v1/auth/logout')
-            ->addHeader('Authorization', 'Bearer ' . $user->access_token, 'Authorization')
+            ->addHeader('Authorization', 'Bearer '.$user->access_token, 'Authorization')
             ->setRouteInfo('Logout', UsersAuthRouteDoc::class)
             ->addGroups(['auth'])
             ->addBody([

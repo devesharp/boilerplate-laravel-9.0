@@ -10,7 +10,7 @@ class ForgetPasswordUsersDto extends AbstractDto
     protected function configureValidatorRules(): array
     {
         return [
-            "login" => new Rule("string", "Login ou email do usuário"),
+            'login' => new Rule('string', 'Login ou email do usuário'),
         ];
     }
 }
