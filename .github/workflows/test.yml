@@ -1,14 +1,29 @@
-name: Test Unit
+name: Test and Registry
+
+env:
+  APP_NAME: EXAMPLE APP
 
 on:
    push:
-
+#     branches:
+#       - develop
 jobs:
    test:
       runs-on: ubuntu-latest
 
       steps:
          -  uses: actions/checkout@v1
+
+         - name: Slack Notification
+           uses: rtCamp/action-slack-notify@v2
+           continue-on-error: true
+           env:
+             SLACK_USERNAME: Devesharp BOT
+             SLACK_CHANNEL: devesharp
+             SLACK_COLOR: '${{ job.status }}'
+             SLACK_ICON: https://avatars.githubusercontent.com/u/59766749?s=400&u=de60999f2e40182b0d927f310ba814840c50e11c&v=4
+             SLACK_MESSAGE: '[${{ env.APP_NAME }}] - Configurando ambiente para testes unitários'
+             SLACK_WEBHOOK: ${{ secrets.SLACK_WEBHOOK }}
 
          -  name: Validate composer.json and composer.lock
             run: composer validate
@@ -29,6 +44,78 @@ jobs:
             run: docker exec test dockerize -wait tcp://db:3306 -timeout 30s
             continue-on-error: true
 
+         - name: Slack Notification
+           uses: rtCamp/action-slack-notify@v2
+           continue-on-error: true
+           env:
+             SLACK_USERNAME: Devesharp BOT
+             SLACK_CHANNEL: devesharp
+             SLACK_COLOR: '${{ job.status }}'
+             SLACK_ICON: https://avatars.githubusercontent.com/u/59766749?s=400&u=de60999f2e40182b0d927f310ba814840c50e11c&v=4
+             SLACK_MESSAGE: '[${{ env.APP_NAME }}] - Iniciando testes unitários'
+             SLACK_WEBHOOK: ${{ secrets.SLACK_WEBHOOK }}
+
          -  name: Testing
             run: docker exec test ./vendor/bin/phpunit --colors=always -c phpunit.ci.xml 2>&1 | tee test-result.txt
             timeout-minutes: 20
+
+         - name: Slack Notification
+           uses: rtCamp/action-slack-notify@v2
+           continue-on-error: true
+           env:
+             SLACK_USERNAME: Devesharp BOT
+             SLACK_CHANNEL: devesharp
+             SLACK_COLOR: '${{ job.status }}'
+             SLACK_ICON: https://avatars.githubusercontent.com/u/59766749?s=400&u=de60999f2e40182b0d927f310ba814840c50e11c&v=4
+             SLACK_MESSAGE: '[${{ env.APP_NAME }}] - Testes finalizados com status ${{ job.status }}'
+             SLACK_WEBHOOK: ${{ secrets.SLACK_WEBHOOK }}
+   registry:
+     runs-on: ubuntu-latest
+     depends-on: test
+     steps:
+       -  name: Checkout
+          uses: actions/checkout@v2
+
+       - name: Slack Notification
+         uses: rtCamp/action-slack-notify@v2
+         continue-on-error: true
+         env:
+           SLACK_USERNAME: Devesharp BOT
+           SLACK_CHANNEL: devesharp
+           SLACK_COLOR: '${{ job.status }}'
+           SLACK_ICON: https://avatars.githubusercontent.com/u/59766749?s=400&u=de60999f2e40182b0d927f310ba814840c50e11c&v=4
+           SLACK_MESSAGE: '[${{ env.APP_NAME }}] - Iniciando build e deploy de imagem no ECR'
+           SLACK_WEBHOOK: ${{ secrets.SLACK_WEBHOOK }}
+
+       -  name: Configure AWS Credentials
+          uses: aws-actions/configure-aws-credentials@v1
+          with:
+            aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+            aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+            aws-region: us-east-2
+
+       -  name: Amazon ECR "Login" Action for GitHub Actions
+          uses: aws-actions/amazon-ecr-login@v1
+
+       -  name: Build, tag, and push image to Amazon ECR
+          env:
+            ECR_REGISTRY: 638332436527.dkr.ecr.us-east-2.amazonaws.com
+            ECR_REPOSITORY: example-api
+            IMAGE_TAG: prod
+          run: |
+            docker build -t $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG .
+            docker push $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG
+       -  name: Logout of Amazon ECR
+          if: always()
+          run: docker logout ${{ steps.login-ecr.outputs.registry }}
+
+       - name: Slack Notification
+         uses: rtCamp/action-slack-notify@v2
+         continue-on-error: true
+         env:
+           SLACK_USERNAME: Devesharp BOT
+           SLACK_CHANNEL: devesharp
+           SLACK_COLOR: '${{ job.status }}'
+           SLACK_ICON: https://avatars.githubusercontent.com/u/59766749?s=400&u=de60999f2e40182b0d927f310ba814840c50e11c&v=4
+           SLACK_MESSAGE: '${{ job.status }} - Imagem enviada com sucesso para o ECR - 638332436527.dkr.ecr.us-east-2.amazonaws.com/example-api:prod'
+           SLACK_WEBHOOK: https://hooks.slack.com/services/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
